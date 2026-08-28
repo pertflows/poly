@@ -96,7 +96,7 @@ export function loadConfig(): Config {
   const cfg: Config = {
     dbPath: envStr("POLY_DB", "./data/poly.db"),
     model: envStr("POLY_MODEL", "claude-opus-5"),
-    researchModel: envStr("POLY_RESEARCH_MODEL", "claude-sonnet-5"),
+    researchModel: envStr("POLY_RESEARCH_MODEL", "claude-opus-5"),
     effort: envStr("POLY_EFFORT", "medium") as Effort,
     research: envBool("POLY_RESEARCH", true),
     researchMaxSearches: envNum("POLY_RESEARCH_MAX_SEARCHES", 6),
