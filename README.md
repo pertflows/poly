@@ -76,6 +76,7 @@ exactly the bias that makes a bad strategy look good.
 npm install
 cp .env.example .env      # add your ANTHROPIC_API_KEY
 npm run doctor            # verify config, credentials, Gamma, and the CLOB
+npm run capture           # pin the live API shapes into test/fixtures/
 npm run scan -- --dry-run # see what would be forecast, spend nothing
 npm run scan              # forecast and open paper positions
 npm run resolve           # settle positions as markets resolve
@@ -155,8 +156,9 @@ src/
   engine/edge.ts       shrinkage, Kelly sizing, depth-aware entry pricing
   engine/calibration.ts Brier scores, calibration bins, the edge test
   store/               SQLite schema and queries (Node's built-in sqlite)
-  cli/                 doctor, scan, resolve, report
-test/                  38 tests, concentrated on the money math and parsing
+  cli/                 doctor, capture, scan, resolve, report
+test/                  45 tests, concentrated on the money math and parsing
+  fixtures/            live Gamma/CLOB payloads, written by `npm run capture`
 ```
 
 `npm test` runs the suite; `npm run typecheck` runs `tsc --noEmit`.
@@ -164,18 +166,77 @@ test/                  38 tests, concentrated on the money math and parsing
 ## Status
 
 The forecasting logic, screening, sizing, scoring, and persistence are
-implemented and unit-tested offline. Two surfaces have not yet been exercised
-against the real thing, because the environment this was built in had no network
-access to Polymarket and no Anthropic credentials:
+implemented and unit-tested offline. Of the two surfaces that needed live
+verification, one is now verified and one is still blocked.
 
-- **Gamma and CLOB response shapes.** The clients are written to accept both the
-  JSON-string and native-array encodings Gamma has used for `outcomes`,
-  `outcomePrices`, and `clobTokenIds`, and both string and numeric forms of the
-  numeric fields. `npm run doctor` fetches a live market, reports exactly which
-  fields it found, and dumps the raw payload shape if normalization fails.
-- **The Claude request shape.** Specifically the `web_search_20260209` tool, and
-  `output_config` carrying both `effort` and a structured-output `format`
-  alongside adaptive thinking. `npm run doctor` confirms credentials and model
-  availability; the first `npm run scan` exercises the rest.
+**The Claude request shape is verified.** Checked against the installed SDK's
+own parameter types (`@anthropic-ai/sdk` 0.122.0) and the current API
+reference, all of it correct as written:
 
-Run `npm run doctor` first. It is built to tell you precisely what to fix.
+- `web_search_20260209` with `name: "web_search"` — the dynamic-filtering
+  variant, which is the one Opus 5 takes. (`web_search_20250305` is for
+  pre-4.6 models.)
+- `output_config` carrying `effort` and a structured-output `format` together
+  on one object, alongside `thinking: {type: "adaptive"}`. Both keys are
+  independent optional fields on `OutputConfig`; the combination is legal.
+- `messages.parse()` + `parsed_output`, and the `zodOutputFormat` helper at
+  `@anthropic-ai/sdk/helpers/zod`.
+- No `budget_tokens` (removed on Opus 5 — a 400) and no assistant prefill
+  (also removed).
+- Per-million pricing in `forecast.ts` matches current published rates, as
+  does `$0.01` per web search.
+
+`test/request-shape.test.ts` pins all of this. The pinning is in the type
+annotations rather than the assertions: each request object is declared as
+`Anthropic.MessageCreateParamsNonStreaming`, so `npm run typecheck` fails if a
+tool version string or the `output_config` layout drifts from what the SDK
+accepts. That catches a request the API would reject without spending a token
+or needing a credential.
+
+**Gamma and CLOB response shapes are still unverified.** They need a live
+capture, and the environments this has been built in have had no egress to
+`gamma-api.polymarket.com` or `clob.polymarket.com` — the proxy returns
+`403 Host not in allowlist`. The clients are written to accept both the
+JSON-string and native-array encodings Gamma has used for `outcomes`,
+`outcomePrices`, and `clobTokenIds`, and both string and numeric forms of the
+numeric fields, but "written to accept" is not "seen working".
+
+To close it, from a host that can reach Polymarket:
+
+```bash
+npm run doctor    # reports which fields it found; dumps the raw payload on failure
+npm run capture   # writes the live payloads to test/fixtures/, verbatim
+npm test          # the fixture tests stop skipping and start asserting
+```
+
+`npm run capture` picks a market representative of what a scan actually
+forecasts — binary, with published criteria and both CLOB token ids — and
+writes it unmodified along with its order book and a provenance record. Until
+those fixtures exist, the four tests in `test/fixtures.test.ts` skip with a
+message saying so rather than passing vacuously. A green suite that proves
+nothing is worse than a visible skip.
+
+## What a scan costs
+
+Each forecast is one Opus 5 call (`POLY_RESEARCH=false`) or two
+(`POLY_RESEARCH=true`, the default: a web-search research stage, then the
+blind structured forecast). The research stage dominates, because search
+results land in the context window and are billed as input tokens on every
+continuation of the server-side tool loop.
+
+This has not yet been measured against the live API. `npm run report` prints
+actual spend from `response.usage` once you have run a scan; measure with
+`npm run scan -- --limit 1` before running a full one.
+
+The levers, in the order worth reaching for:
+
+| Lever | Effect |
+|---|---|
+| `POLY_MAX_FORECASTS` | Linear, and the only hard cap. This is the spend limit. |
+| Scan cadence | Linear. Every other day halves the bill. |
+| `POLY_RESEARCH_MAX_SEARCHES` | Cuts the dominant term — both the per-search fee and the search results billed as input tokens. |
+| `POLY_EFFORT` | `medium` materially cuts thinking tokens, which are billed as output. |
+| `POLY_RESEARCH=false` | Roughly halves cost, and materially hurts accuracy on anything news-driven. The last resort, not the first. |
+
+Screening is the other half of cost control: every market that reaches Claude
+should be one you would actually trade if the number came back right.
