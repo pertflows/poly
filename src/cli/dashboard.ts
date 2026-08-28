@@ -1,4 +1,4 @@
-import { writeFile } from "node:fs/promises";
+import { mkdir, writeFile } from "node:fs/promises";
 
 import { loadConfig } from "../config.ts";
 import { openDb } from "../store/db.ts";
@@ -43,8 +43,14 @@ export async function dashboard(argv: readonly string[]): Promise<number> {
   const out = argv.includes("--out") ? (argv[argv.indexOf("--out") + 1] ?? "dashboard.html") : "dashboard.html";
   const db = openDb(cfg.dbPath);
 
-  const open = db.prepare("SELECT * FROM positions WHERE status='open' ORDER BY opened_at DESC").all() as Row[];
-  const closed = db.prepare("SELECT * FROM positions WHERE status!='open' ORDER BY settled_at DESC").all() as Row[];
+  const open = db.prepare(
+    `SELECT p.*, f.end_date FROM positions p
+       LEFT JOIN forecasts f ON f.id = p.forecast_id
+      WHERE p.status='open' ORDER BY p.opened_at DESC`).all() as Row[];
+  const closed = db.prepare(
+    `SELECT p.*, f.end_date FROM positions p
+       LEFT JOIN forecasts f ON f.id = p.forecast_id
+      WHERE p.status!='open' ORDER BY p.settled_at DESC`).all() as Row[];
   const forecasts = db.prepare(
     `SELECT question, probability, market_probability, confidence, abstain, stale_knowledge,
             resolution_reading, key_drivers, evidence_for, evidence_against, base_rate,
@@ -64,18 +70,32 @@ export async function dashboard(argv: readonly string[]): Promise<number> {
     const value = now === null ? stake : contracts * now;
     openCost += stake; openValue += value; openPayout += contracts;
     const d = value - stake;
-    openRows.push(`<tr>
+    const end = String(p["end_date"] ?? "").slice(0, 10);
+    const daysLeft = end ? Math.ceil((new Date(end).getTime() - Date.now()) / 86_400_000) : null;
+    openRows.push(`<tr data-mkt="${esc(p["market_id"])}">
       <td class="q">${esc(p["question"])}</td>
       <td><span class="side ${esc(side.toLowerCase())}">${esc(side)}</span></td>
       <td class="n">${entry.toFixed(3)}</td>
-      <td class="n">${now === null ? "&mdash;" : now.toFixed(3)}</td>
+      <td class="n now">${now === null ? "&mdash;" : now.toFixed(3)}</td>
       <td class="n">${contracts.toFixed(1)}</td>
       <td class="n">${usd(stake)}</td>
-      <td class="n ${d >= 0 ? "up" : "down"}">${usd(d)}</td>
+      <td class="n unreal ${d >= 0 ? "up" : "down"}">${usd(d)}</td>
       <td class="n"><strong>${usd(contracts)}</strong> <span class="muted">(+${usd(contracts - stake)})</span></td>
-      <td class="n muted">${now === null ? "&mdash;" : pct(now)}</td>
-      <td class="n muted">${esc(String(p["opened_at"]).slice(0, 10))}</td></tr>`);
+      <td class="n muted odds">${now === null ? "&mdash;" : pct(now)}</td>
+      <td class="n">${end ? `${end}<br><span class="muted">${daysLeft !== null && daysLeft >= 0 ? `${daysLeft}d left` : "closing"}</span>` : "&mdash;"}</td></tr>`);
   }
+
+  // Payload the browser re-prices against. Polymarket serves
+  // access-control-allow-origin:* on both APIs, so the page can poll live
+  // prices itself with no backend. Where that fetch is blocked (the artifact
+  // viewer's CSP forbids it) the page keeps these snapshot values instead of
+  // rendering blanks.
+  const livePayload = JSON.stringify(open.map((p) => ({
+    id: String(p["market_id"]),
+    side: String(p["side"]).toUpperCase(),
+    contracts: Number(p["contracts"]),
+    stake: Number(p["stake_usd"]),
+  })));
 
   const realized = closed.reduce((a, p) => a + Number(p["pnl_usd"] ?? 0), 0);
   const wins = closed.filter((p) => Number(p["pnl_usd"] ?? 0) > 0).length;
@@ -168,22 +188,26 @@ export async function dashboard(argv: readonly string[]): Promise<number> {
   .foot{font-size:11px;margin-top:11px;padding-top:9px;border-top:1px solid var(--line)}
   .empty{background:var(--panel);border:1px dashed var(--line);border-radius:10px;
          padding:22px;color:var(--muted);font-size:14px}
+  .pill{display:inline-block;font-size:11px;background:var(--chip);color:var(--muted);
+        padding:2px 8px;border-radius:99px;font-variant-numeric:tabular-nums}
+  .pill.live{color:var(--up)}
   .banner{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
           border-radius:8px;padding:11px 14px;font-size:13px;color:var(--muted);margin-bottom:22px}
 </style>
-<div class="wrap">
+<div class="wrap" data-cash="${cash.toFixed(4)}">
   <h1>Poly Paper Desk</h1>
-  <div class="sub">Simulated positions only &middot; no money can move &middot; generated ${new Date().toISOString().replace("T", " ").slice(0, 16)} UTC</div>
+  <div class="sub">Simulated positions only &middot; no money can move &middot;
+    <span id="status" class="pill">snapshot ${new Date().toISOString().replace("T", " ").slice(0, 16)} UTC</span></div>
 
   <div class="banner">Open positions are marked to the live market price. Realized P&amp;L counts only
   resolved markets &mdash; most questions here run 2&ndash;120 days, so early on nearly everything sits unrealized.</div>
 
   <div class="kpis">
-    <div class="kpi"><div class="lab">Equity</div><div class="val">${usd(equity)}</div>
+    <div class="kpi"><div class="lab">Equity</div><div class="val" id="kpi-equity">${usd(equity)}</div>
       <div class="note">from ${usd(cfg.trade.bankroll)} start</div></div>
     <div class="kpi"><div class="lab">Cash</div><div class="val">${usd(cash)}</div>
       <div class="note">${usd(openCost)} deployed</div></div>
-    <div class="kpi"><div class="lab">Unrealized</div><div class="val ${unrealized >= 0 ? "up" : "down"}">${usd(unrealized)}</div>
+    <div class="kpi"><div class="lab">Unrealized</div><div class="val ${unrealized >= 0 ? "up" : "down"}" id="kpi-unreal">${usd(unrealized)}</div>
       <div class="note">${open.length} open</div></div>
     <div class="kpi"><div class="lab">Realized</div><div class="val ${realized >= 0 ? "up" : "down"}">${usd(realized)}</div>
       <div class="note">${closed.length} settled${closed.length ? ` &middot; ${wins}W ${closed.length - wins}L` : ""}</div></div>
@@ -195,22 +219,96 @@ export async function dashboard(argv: readonly string[]): Promise<number> {
 
   <h2>Open positions</h2>
   ${open.length ? `<div class="scroll"><table>
-    <tr><th>Market</th><th>Side</th><th class="n">Entry</th><th class="n">Now</th><th class="n">Contracts</th><th class="n">Stake</th><th class="n">Unrealized</th><th class="n">If it wins</th><th class="n">Odds now</th><th class="n">Opened</th></tr>
+    <tr><th>Market</th><th>Side</th><th class="n">Entry</th><th class="n">Now</th><th class="n">Contracts</th><th class="n">Stake</th><th class="n">Unrealized</th><th class="n">If it wins</th><th class="n">Odds now</th><th class="n">Closes</th></tr>
     ${openRows.join("")}</table></div>`
    : `<div class="empty">No open positions. The bot only takes one when its probability differs from the market by more than the minimum edge.</div>`}
 
   <h2>Settled</h2>
   ${closed.length ? `<div class="scroll"><table>
-    <tr><th>Market</th><th>Side</th><th class="n">Entry</th><th class="n">Stake</th><th class="n">Resolved</th><th class="n">P&amp;L</th><th class="n">Date</th></tr>
+    <tr><th>Market</th><th>Side</th><th class="n">Entry</th><th class="n">Stake</th><th class="n">Resolved</th><th class="n">P&amp;L</th><th class="n">Settled</th></tr>
     ${closedRows}</table></div>`
    : `<div class="empty">Nothing has resolved yet.</div>`}
 
   <h2>What it is thinking</h2>
   ${forecasts.length ? `<div class="cards">${thinking}</div>`
    : `<div class="empty">No forecasts recorded yet.</div>`}
-</div>`;
+</div>
+<script>
+(function(){
+  var POS = ${livePayload};
+  var el = function(s,r){return (r||document).querySelector(s)};
+  var money = function(n){return (n<0?"-":"")+"$"+Math.abs(n).toFixed(2)};
+  var status = el("#status");
+  if(!POS.length){ if(status) status.textContent="no open positions"; return; }
+
+  function yesPrice(m){
+    try{
+      var p = typeof m.outcomePrices==="string" ? JSON.parse(m.outcomePrices) : m.outcomePrices;
+      var v = parseFloat(p[0]);
+      return isFinite(v) ? v : null;
+    }catch(e){ return null; }
+  }
+
+  function paint(prices){
+    var cost=0, value=0, live=0;
+    POS.forEach(function(p){
+      var yes = prices[p.id];
+      var now = yes===null||yes===undefined ? null : (p.side==="YES" ? yes : 1-yes);
+      var val = now===null ? p.stake : p.contracts*now;
+      cost += p.stake; value += val;
+      if(now!==null) live++;
+      var row = el('tr[data-mkt="'+p.id+'"]');
+      if(!row || now===null) return;
+      var d = val - p.stake;
+      var c;
+      if((c=el(".now",row)))    c.textContent = now.toFixed(3);
+      if((c=el(".odds",row)))   c.textContent = (now*100).toFixed(1)+"%";
+      if((c=el(".unreal",row))){ c.textContent = money(d);
+        c.className = "n unreal " + (d>=0?"up":"down"); }
+    });
+    var unreal = value - cost;
+    var w = el(".wrap"); var base = parseFloat((w && w.dataset.cash) || "0");
+    var k;
+    if((k=el("#kpi-unreal"))){ k.textContent = money(unreal);
+      k.className = "val " + (unreal>=0?"up":"down"); }
+    if((k=el("#kpi-equity"))) k.textContent = money(base + value);
+    if(status){
+      status.textContent = "live · " + live + "/" + POS.length + " priced · " +
+        new Date().toLocaleTimeString();
+      status.className = "pill live";
+    }
+  }
+
+  function tick(){
+    Promise.all(POS.map(function(p){
+      return fetch("https://gamma-api.polymarket.com/markets?id="+encodeURIComponent(p.id))
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(j){
+          var m = Array.isArray(j) ? j[0] : j;
+          return [p.id, m ? yesPrice(m) : null];
+        })
+        .catch(function(){ return [p.id, null]; });
+    })).then(function(pairs){
+      var prices={}, any=false;
+      pairs.forEach(function(kv){ prices[kv[0]]=kv[1]; if(kv[1]!==null) any=true; });
+      if(any) paint(prices);
+      else if(status) status.textContent = "snapshot · live prices unavailable here";
+    }).catch(function(){
+      if(status) status.textContent = "snapshot · live prices unavailable here";
+    });
+  }
+
+  tick();
+  setInterval(tick, 20000);
+  document.addEventListener("visibilitychange", function(){ if(!document.hidden) tick(); });
+})();
+</script>`;
 
   await writeFile(out, html);
+  // Vercel serves web/ as a static site; the page polls Polymarket itself, so
+  // the deploy needs no backend. The nightly push is what refreshes it.
+  await mkdir("web", { recursive: true });
+  await writeFile("web/index.html", html);
   db.close();
   console.log(`\n  Wrote ${out}\n  equity ${usd(equity)} | ${open.length} open | ${closed.length} settled | model spend ${usd(spend)}\n`);
   return 0;

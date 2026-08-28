@@ -1,0 +1,7 @@
+{
+  "cleanUrls": true,
+  "outputDirectory": "web",
+  "headers": [
+    { "source": "/(.*)", "headers": [{ "key": "Cache-Control", "value": "no-store" }] }
+  ]
+}
