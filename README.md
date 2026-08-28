@@ -165,56 +165,69 @@ test/                  45 tests, concentrated on the money math and parsing
 
 ## Status
 
-The forecasting logic, screening, sizing, scoring, and persistence are
-implemented and unit-tested offline. Of the two surfaces that needed live
-verification, one is now verified and one is still blocked.
+Everything except the cost measurement has now been exercised against the live
+APIs. Both surfaces that were previously unverified are verified.
 
-**The Claude request shape is verified.** Checked against the installed SDK's
-own parameter types (`@anthropic-ai/sdk` 0.122.0) and the current API
-reference, all of it correct as written:
+**Gamma and CLOB response shapes: verified.** `npm run doctor` passes against
+live endpoints, and `test/fixtures/` holds a real market and a real order book
+captured verbatim by `npm run capture`. The client's assumptions all held:
 
-- `web_search_20260209` with `name: "web_search"` — the dynamic-filtering
-  variant, which is the one Opus 5 takes. (`web_search_20250305` is for
-  pre-4.6 models.)
-- `output_config` carrying `effort` and a structured-output `format` together
-  on one object, alongside `thinking: {type: "adaptive"}`. Both keys are
-  independent optional fields on `OutputConfig`; the combination is legal.
-- `messages.parse()` + `parsed_output`, and the `zodOutputFormat` helper at
-  `@anthropic-ai/sdk/helpers/zod`.
-- No `budget_tokens` (removed on Opus 5 — a 400) and no assistant prefill
-  (also removed).
-- Per-million pricing in `forecast.ts` matches current published rates, as
-  does `$0.01` per web search.
+- `outcomes`, `outcomePrices`, and `clobTokenIds` arrive as JSON-encoded
+  strings (`"[\"Yes\", \"No\"]"`), which `parseListField` decodes.
+- `liquidity` and `volume` are strings; `liquidityNum` and `volumeNum` are
+  floats. The client prefers the `*Num` variants, so it gets numbers.
+- `umaResolutionStatus` is absent from the markets list payload. Harmless —
+  resolution settles on `closed` plus cleared `outcomePrices`, not on it.
 
-`test/request-shape.test.ts` pins all of this. The pinning is in the type
-annotations rather than the assertions: each request object is declared as
-`Anthropic.MessageCreateParamsNonStreaming`, so `npm run typecheck` fails if a
-tool version string or the `output_config` layout drifts from what the SDK
-accepts. That catches a request the API would reject without spending a token
-or needing a credential.
+`test/fixtures.test.ts` pins all of this against the captured payloads. Fixtures
+go stale; when Gamma changes shape, re-run `npm run capture` and the diff shows
+exactly what moved.
 
-**Gamma and CLOB response shapes are still unverified.** They need a live
-capture, and the environments this has been built in have had no egress to
-`gamma-api.polymarket.com` or `clob.polymarket.com` — the proxy returns
-`403 Host not in allowlist`. The clients are written to accept both the
-JSON-string and native-array encodings Gamma has used for `outcomes`,
-`outcomePrices`, and `clobTokenIds`, and both string and numeric forms of the
-numeric fields, but "written to accept" is not "seen working".
+**The Claude request shape: verified** against the installed SDK's parameter
+types (`@anthropic-ai/sdk` 0.122.0) and the current API reference. Correct as
+written — `web_search_20260209`, `output_config` carrying `effort` and a
+structured-output `format` together alongside `thinking: {type: "adaptive"}`,
+`messages.parse()` / `parsed_output`, no `budget_tokens` (a 400 on Opus 5), and
+pricing that matches published rates. `test/request-shape.test.ts` pins it in
+type annotations, so `npm run typecheck` fails on drift without spending a
+token.
 
-To close it, from a host that can reach Polymarket:
+**Not yet measured: what a forecast actually costs.** That needs a funded
+`ANTHROPIC_API_KEY`. Run `npm run scan -- --limit 1` and read the cost off
+`npm run report` before running a full scan.
 
-```bash
-npm run doctor    # reports which fields it found; dumps the raw payload on failure
-npm run capture   # writes the live payloads to test/fixtures/, verbatim
-npm test          # the fixture tests stop skipping and start asserting
+## What the screen actually does
+
+On a live run of 500 markets, 73 passed:
+
+```
+    113  not a binary Yes/No market
+    113  resolves beyond 120d
+     97  priced at the extremes
+     90  resolves in under 2d
+      6  below liquidity floor
+      5  no usable resolution date
+      3  spread too wide
 ```
 
-`npm run capture` picks a market representative of what a scan actually
-forecasts — binary, with published criteria and both CLOB token ids — and
-writes it unmodified along with its order book and a provenance record. Until
-those fixtures exist, the four tests in `test/fixtures.test.ts` skip with a
-message saying so rather than passing vacuously. A green suite that proves
-nothing is worse than a visible skip.
+Two things this exposes, both worth fixing before spending real money on
+forecasts:
+
+**The scan fetches the wrong end of the market.** `fetchOpenMarkets` pages
+Gamma with `order=volume24hr&ascending=false` — the most heavily traded markets
+first. Those are precisely the ones this project argues are the worst place to
+look, and the liquidity ceiling never fires as a result: nothing in the top 500
+by volume was rejected for being too liquid. Reaching the long tail means
+sorting differently or paging much deeper.
+
+**The ranker steers spend toward markets with no plausible edge.** `rankForScan`
+prefers soon-resolving, mid-priced markets, and on a live run that selected nine
+short-dated crypto touch markets out of fifteen — "Will Bitcoin reach $82,500 in
+August", four days out. A four-day price-touch question is close to a random
+walk; careful reading of resolution criteria buys nothing there. The
+soon-resolving preference is defensible while you want fast feedback, but it
+needs a counterweight, or most of the budget goes to questions where the market
+is right by construction.
 
 ## What a scan costs
 
@@ -224,7 +237,7 @@ blind structured forecast). The research stage dominates, because search
 results land in the context window and are billed as input tokens on every
 continuation of the server-side tool loop.
 
-This has not yet been measured against the live API. `npm run report` prints
+This has not yet been measured against the live API - it needs a funded key. `npm run report` prints
 actual spend from `response.usage` once you have run a scan; measure with
 `npm run scan -- --limit 1` before running a full one.
 
