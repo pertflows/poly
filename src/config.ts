@@ -117,11 +117,11 @@ export function loadConfig(): Config {
       feeBps: envNum("POLY_FEE_BPS", 0),
       slippageBps: envNum("POLY_SLIPPAGE_BPS", 50),
       shrink: {
-        low: envNum("POLY_SHRINK_LOW", 0.2),
-        medium: envNum("POLY_SHRINK_MEDIUM", 0.35),
-        high: envNum("POLY_SHRINK_HIGH", 0.5),
+        low: envNum("POLY_SHRINK_LOW", 1.0),
+        medium: envNum("POLY_SHRINK_MEDIUM", 1.0),
+        high: envNum("POLY_SHRINK_HIGH", 1.0),
       },
-      staleKnowledgeShrink: envNum("POLY_STALE_SHRINK", 0.3),
+      staleKnowledgeShrink: envNum("POLY_STALE_SHRINK", 1.0),
     },
   };
 

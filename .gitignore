@@ -10,3 +10,4 @@ node_modules/
 !data/poly.db
 dist/
 .DS_Store
+dashboard.html

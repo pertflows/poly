@@ -11,6 +11,7 @@
     "poly": "node --experimental-sqlite --env-file-if-exists=.env --no-warnings --import tsx src/cli/index.ts",
     "doctor": "npm run poly -- doctor",
     "capture": "npm run poly -- capture",
+    "dashboard": "npm run poly -- dashboard",
     "scan": "npm run poly -- scan",
     "resolve": "npm run poly -- resolve",
     "report": "npm run poly -- report",
