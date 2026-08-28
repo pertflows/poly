@@ -74,7 +74,7 @@ exactly the bias that makes a bad strategy look good.
 
 ```bash
 npm install
-cp .env.example .env      # add your ANTHROPIC_API_KEY
+cp .env.example .env      # add your ANTHROPIC_API_KEY - it is read automatically
 npm run doctor            # verify config, credentials, Gamma, and the CLOB
 npm run capture           # pin the live API shapes into test/fixtures/
 npm run scan -- --dry-run # see what would be forecast, spend nothing
@@ -162,6 +162,9 @@ test/                  45 tests, concentrated on the money math and parsing
 ```
 
 `npm test` runs the suite; `npm run typecheck` runs `tsc --noEmit`.
+
+Requires Node 22.9 or newer: the CLI loads `.env` via `--env-file-if-exists`,
+and the store uses Node's built-in SQLite.
 
 ## Status
 
