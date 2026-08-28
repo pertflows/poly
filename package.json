@@ -1,0 +1,25 @@
+{
+  "name": "poly",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Paper-trading research engine that measures whether Claude has forecasting edge over Polymarket.",
+  "scripts": {
+    "poly": "node --experimental-sqlite --no-warnings --import tsx src/cli/index.ts",
+    "doctor": "npm run poly -- doctor",
+    "scan": "npm run poly -- scan",
+    "resolve": "npm run poly -- resolve",
+    "report": "npm run poly -- report",
+    "test": "node --experimental-sqlite --no-warnings --import tsx --test test/*.test.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.122.0",
+    "zod": "^4.1.13"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "tsx": "^4.23.12",
+    "typescript": "^6.0.3"
+  }
+}
