@@ -89,14 +89,14 @@ export function loadConfig(): Config {
   const cfg: Config = {
     dbPath: envStr("POLY_DB", "./data/poly.db"),
     model: envStr("POLY_MODEL", "claude-opus-5"),
-    effort: envStr("POLY_EFFORT", "high") as Effort,
+    effort: envStr("POLY_EFFORT", "medium") as Effort,
     research: envBool("POLY_RESEARCH", true),
     researchMaxSearches: envNum("POLY_RESEARCH_MAX_SEARCHES", 6),
     gammaBase: envStr("POLY_GAMMA_BASE", "https://gamma-api.polymarket.com"),
     clobBase: envStr("POLY_CLOB_BASE", "https://clob.polymarket.com"),
     scan: {
       maxMarkets: envNum("POLY_MAX_MARKETS", 500),
-      maxForecasts: envNum("POLY_MAX_FORECASTS", 15),
+      maxForecasts: envNum("POLY_MAX_FORECASTS", 8),
       concurrency: envNum("POLY_CONCURRENCY", 3),
       refreshDays: envNum("POLY_REFRESH_DAYS", 7),
       minLiquidity: envNum("POLY_MIN_LIQUIDITY", 5_000),
@@ -109,7 +109,7 @@ export function loadConfig(): Config {
       maxPrice: envNum("POLY_MAX_PRICE", 0.95),
     },
     trade: {
-      bankroll: envNum("POLY_BANKROLL", 1_000),
+      bankroll: envNum("POLY_BANKROLL", 100),
       minEdge: envNum("POLY_MIN_EDGE", 0.07),
       kellyFraction: envNum("POLY_KELLY_FRACTION", 0.25),
       maxPositionPct: envNum("POLY_MAX_POSITION_PCT", 0.05),
