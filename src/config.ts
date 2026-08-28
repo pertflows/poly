@@ -76,6 +76,13 @@ export interface TradeConfig {
 export interface Config {
   dbPath: string;
   model: string;
+  /**
+   * Model for the research stage. Gathering and summarizing evidence is not
+   * the judgement call - that is stage two's job, on `model`. Research is 92%
+   * of a forecast's cost, so running it on a cheaper model is where the bill
+   * actually moves.
+   */
+  researchModel: string;
   effort: Effort;
   research: boolean;
   researchMaxSearches: number;
@@ -89,6 +96,7 @@ export function loadConfig(): Config {
   const cfg: Config = {
     dbPath: envStr("POLY_DB", "./data/poly.db"),
     model: envStr("POLY_MODEL", "claude-opus-5"),
+    researchModel: envStr("POLY_RESEARCH_MODEL", "claude-sonnet-5"),
     effort: envStr("POLY_EFFORT", "medium") as Effort,
     research: envBool("POLY_RESEARCH", true),
     researchMaxSearches: envNum("POLY_RESEARCH_MAX_SEARCHES", 6),

@@ -106,7 +106,7 @@ export async function researchMarket(
   // Server-side tool loops pause at 10 iterations; resume by re-sending.
   for (let continuation = 0; continuation < 4; continuation++) {
     const response = await client.messages.create({
-      model: cfg.model,
+      model: cfg.researchModel,
       max_tokens: 8_000,
       system: [
         { type: "text", text: RESEARCH_SYSTEM, cache_control: { type: "ephemeral" } },
@@ -123,7 +123,7 @@ export async function researchMarket(
       messages,
     });
 
-    cost = addCost(cost, priceUsage(cfg.model, response.usage, countSearches(response.content)));
+    cost = addCost(cost, priceUsage(cfg.researchModel, response.usage, countSearches(response.content)));
 
     if (response.stop_reason === "refusal") {
       throw new RefusalError(response.stop_details?.category ?? null);
