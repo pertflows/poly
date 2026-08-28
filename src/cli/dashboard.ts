@@ -54,7 +54,7 @@ export async function dashboard(argv: readonly string[]): Promise<number> {
   const nForecasts = (db.prepare("SELECT COUNT(*) AS n FROM forecasts").get() as Row)["n"] as number;
 
   // Mark open positions to the live book.
-  let openCost = 0, openValue = 0;
+  let openCost = 0, openValue = 0, openPayout = 0;
   const openRows: string[] = [];
   for (const p of open) {
     const stake = Number(p["stake_usd"]), contracts = Number(p["contracts"]);
@@ -62,7 +62,7 @@ export async function dashboard(argv: readonly string[]): Promise<number> {
     const yes = await livePrice(cfg, String(p["market_id"]));
     const now = yes === null ? null : side.toUpperCase() === "YES" ? yes : 1 - yes;
     const value = now === null ? stake : contracts * now;
-    openCost += stake; openValue += value;
+    openCost += stake; openValue += value; openPayout += contracts;
     const d = value - stake;
     openRows.push(`<tr>
       <td class="q">${esc(p["question"])}</td>
@@ -72,6 +72,8 @@ export async function dashboard(argv: readonly string[]): Promise<number> {
       <td class="n">${contracts.toFixed(1)}</td>
       <td class="n">${usd(stake)}</td>
       <td class="n ${d >= 0 ? "up" : "down"}">${usd(d)}</td>
+      <td class="n"><strong>${usd(contracts)}</strong> <span class="muted">(+${usd(contracts - stake)})</span></td>
+      <td class="n muted">${now === null ? "&mdash;" : pct(now)}</td>
       <td class="n muted">${esc(String(p["opened_at"]).slice(0, 10))}</td></tr>`);
   }
 
@@ -185,13 +187,15 @@ export async function dashboard(argv: readonly string[]): Promise<number> {
       <div class="note">${open.length} open</div></div>
     <div class="kpi"><div class="lab">Realized</div><div class="val ${realized >= 0 ? "up" : "down"}">${usd(realized)}</div>
       <div class="note">${closed.length} settled${closed.length ? ` &middot; ${wins}W ${closed.length - wins}L` : ""}</div></div>
+    <div class="kpi"><div class="lab">If all open win</div><div class="val up">${usd(openPayout)}</div>
+      <div class="note">on ${usd(openCost)} staked &middot; +${usd(openPayout - openCost)}</div></div>
     <div class="kpi"><div class="lab">Model spend</div><div class="val">${usd(spend)}</div>
       <div class="note">${nForecasts} forecasts &middot; real dollars</div></div>
   </div>
 
   <h2>Open positions</h2>
   ${open.length ? `<div class="scroll"><table>
-    <tr><th>Market</th><th>Side</th><th class="n">Entry</th><th class="n">Now</th><th class="n">Contracts</th><th class="n">Stake</th><th class="n">Unrealized</th><th class="n">Opened</th></tr>
+    <tr><th>Market</th><th>Side</th><th class="n">Entry</th><th class="n">Now</th><th class="n">Contracts</th><th class="n">Stake</th><th class="n">Unrealized</th><th class="n">If it wins</th><th class="n">Odds now</th><th class="n">Opened</th></tr>
     ${openRows.join("")}</table></div>`
    : `<div class="empty">No open positions. The bot only takes one when its probability differs from the market by more than the minimum edge.</div>`}
 
