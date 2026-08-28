@@ -234,25 +234,50 @@ is right by construction.
 
 ## What a scan costs
 
-Each forecast is one Opus 5 call (`POLY_RESEARCH=false`) or two
-(`POLY_RESEARCH=true`, the default: a web-search research stage, then the
-blind structured forecast). The research stage dominates, because search
-results land in the context window and are billed as input tokens on every
-continuation of the server-side tool loop.
+Measured against the live API on one real market (an Icelandic EU referendum
+question, two days to resolution):
 
-This has not yet been measured against the live API - it needs a funded key. `npm run report` prints
-actual spend from `response.usage` once you have run a scan; measure with
-`npm run scan -- --limit 1` before running a full one.
+| Configuration | Cost per forecast | Wall clock |
+|---|---|---|
+| Defaults: research on, `effort=high` | **$0.65** | 2m52s |
+| research on, `effort=high`, searches capped at 3 | $0.65 | 4m17s |
+| research on, `effort=medium` | $0.38 | 1m41s |
+| research off, `effort=high` | $0.05 | 27s |
 
-The levers, in the order worth reaching for:
+**The research stage is 92% of the cost** - $0.60 of the $0.65. Search results
+land in the context window and are billed as input tokens on every continuation
+of the server-side tool loop, and the thinking that accompanies them is billed
+as output.
 
-| Lever | Effect |
-|---|---|
-| `POLY_MAX_FORECASTS` | Linear, and the only hard cap. This is the spend limit. |
-| Scan cadence | Linear. Every other day halves the bill. |
-| `POLY_RESEARCH_MAX_SEARCHES` | Cuts the dominant term — both the per-search fee and the search results billed as input tokens. |
-| `POLY_EFFORT` | `medium` materially cuts thinking tokens, which are billed as output. |
-| `POLY_RESEARCH=false` | Roughly halves cost, and materially hurts accuracy on anything news-driven. The last resort, not the first. |
+Two of these results are worth knowing before you tune anything:
 
-Screening is the other half of cost control: every market that reaches Claude
-should be one you would actually trade if the number came back right.
+**`POLY_RESEARCH_MAX_SEARCHES` does nothing useful.** Halving it from 6 to 3
+cost exactly the same and took ninety seconds *longer*. It is a ceiling the
+model was not reaching; the spend is driven by how much it reads and thinks,
+not by a search count. Lowering it buys nothing.
+
+**`POLY_EFFORT` is the lever that works.** `medium` costs 42% less than `high`
+and finishes in half the time. Whether it forecasts as well is unmeasured -
+that is what the calibration report is for, and it is worth running both for a
+while before settling.
+
+### Hitting a monthly budget
+
+$100/month is $3.33/day. Divide by the measured cost:
+
+| Configuration | Forecasts/day | Monthly |
+|---|---|---|
+| Defaults ($0.65) | 5 | $97 |
+| `POLY_EFFORT=medium` ($0.38) | 8 | $91 |
+| `POLY_RESEARCH=false` ($0.05) | 66 | $99 |
+
+The default `POLY_MAX_FORECASTS=15` run daily is **$292/month**, roughly triple
+that budget. Set it deliberately.
+
+The last row is a trap worth naming: 66 forecasts a day reaches statistical
+significance fastest and is the cheapest per forecast, but it forecasts from
+training data alone on questions that turn on this week's news. Cheap forecasts
+you cannot trust are not a bargain.
+
+A spend limit set in the Claude Console is a better guardrail than any of this,
+because it holds when a scheduled run misbehaves.
