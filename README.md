@@ -74,7 +74,7 @@ exactly the bias that makes a bad strategy look good.
 
 ```bash
 npm install
-cp .env.example .env      # add your ANTHROPIC_API_KEY - it is read automatically
+cp .env.example .env      # put your ANTHROPIC_API_KEY in .env, never in .env.example
 npm run doctor            # verify config, credentials, Gamma, and the CLOB
 npm run capture           # pin the live API shapes into test/fixtures/
 npm run scan -- --dry-run # see what would be forecast, spend nothing
