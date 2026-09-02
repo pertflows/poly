@@ -1,0 +1,91 @@
+name: Nightly paper scan
+
+# Runs the paper-trading bot on a schedule. This lives here rather than in a
+# scheduled Claude session because ANTHROPIC_API_KEY is a reserved name in the
+# Claude Code cloud environment - it is stripped rather than passed through, so
+# a session could never authenticate the bot's own API calls. GitHub encrypted
+# secrets are built for exactly this.
+#
+# PAPER TRADING ONLY. Nothing here can place an order or touch a wallet.
+
+on:
+  schedule:
+    - cron: "0 7 * * *"
+  workflow_dispatch: {}
+
+# Never let two runs write the ledger at once - it is a SQLite binary and git
+# cannot merge it, so an overlap would silently lose one run's trades.
+concurrency:
+  group: nightly-scan
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/polymarket-paper-trading-setup-88a5tx
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+
+      - run: npm ci
+
+      # Verifies config, credentials, Gamma and the CLOB before spending
+      # anything. A bad key stops the run here having cost nothing.
+      - name: Preflight
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npm run doctor
+
+      - name: Settle resolved positions
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npm run resolve
+
+      - name: Scan and open new paper positions
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npm run scan
+
+      - name: Rebuild the dashboard
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: npm run dashboard
+
+      - name: Commit the ledger
+        run: |
+          git config user.name  "poly-bot"
+          git config user.email "noreply@github.com"
+          git add data/poly.db web/index.html
+          if git diff --staged --quiet; then
+            echo "Nothing changed - no commit."
+          else
+            git commit -m "Nightly paper scan $(date -u +%Y-%m-%d)"
+            git push origin HEAD:claude/polymarket-paper-trading-setup-88a5tx
+          fi
+
+      - name: Summary
+        if: always()
+        run: |
+          {
+            echo "### Paper desk"
+            echo '```'
+            node --experimental-sqlite --no-warnings -e "
+              const {DatabaseSync}=require('node:sqlite');
+              const db=new DatabaseSync('./data/poly.db');
+              const f=db.prepare('SELECT COUNT(*) n, ROUND(SUM(cost_usd),2) c FROM forecasts').get();
+              const o=db.prepare(\"SELECT COUNT(*) n, ROUND(SUM(stake_usd),2) s FROM positions WHERE status='open'\").get();
+              const s=db.prepare(\"SELECT COUNT(*) n, ROUND(SUM(pnl_usd),2) p FROM positions WHERE status!='open'\").get();
+              console.log('open positions   ' + o.n + '  (\$' + (o.s||0) + ' staked)');
+              console.log('settled          ' + s.n + '  (P&L \$' + (s.p||0) + ')');
+              console.log('forecasts        ' + f.n + '  (model spend \$' + f.c + ')');
+            " 2>&1 || echo "ledger unreadable"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
