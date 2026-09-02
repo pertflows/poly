@@ -38,6 +38,32 @@ export async function doctor(): Promise<number> {
     add("database", false, String(err));
   }
 
+  // A key mangled in transit - a newline from a wrapped paste, stray quotes,
+  // trailing whitespace - fails as a plain 401, which reads identically to a
+  // revoked key and sends you back to the console to reissue a perfectly good
+  // one. Check the shape before blaming the credential.
+  const rawKey = process.env["ANTHROPIC_API_KEY"];
+  if (rawKey !== undefined) {
+    const problems: string[] = [];
+    if (/\s/.test(rawKey)) {
+      problems.push("contains whitespace or a line break - it was probably split when pasted");
+    }
+    if (rawKey !== rawKey.trim()) problems.push("has leading or trailing whitespace");
+    if (/^['"]|['"]$/.test(rawKey.trim())) problems.push("is wrapped in quotes");
+    if (rawKey.trim().length < 40) {
+      problems.push(`is only ${rawKey.trim().length} characters - it looks truncated`);
+    }
+    if (problems.length > 0) {
+      add(
+        "api key shape",
+        false,
+        `ANTHROPIC_API_KEY ${problems.join("; ")}.\n` +
+          `    Re-paste it as one unbroken line. This fails as a plain 401, so it is\n` +
+          `    easy to mistake for a bad key when the key itself is fine.`,
+      );
+    }
+  }
+
   // Anthropic: a models lookup proves credentials without spending on tokens.
   try {
     const client = new Anthropic();
