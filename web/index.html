@@ -52,103 +52,143 @@
   .banner{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
           border-radius:8px;padding:11px 14px;font-size:13px;color:var(--muted);margin-bottom:22px}
 </style>
-<div class="wrap" data-cash="75.8969">
+<div class="wrap" data-cash="53.9179">
   <h1>Poly Paper Desk</h1>
   <div class="sub">Simulated positions only &middot; no money can move &middot;
-    <span id="status" class="pill">snapshot 2026-09-02 12:08 UTC</span></div>
+    <span id="status" class="pill">snapshot 2026-09-03 12:08 UTC</span></div>
 
   <div class="banner">Open positions are marked to the live market price. Realized P&amp;L counts only
   resolved markets &mdash; most questions here run 2&ndash;120 days, so early on nearly everything sits unrealized.</div>
 
   <div class="kpis">
-    <div class="kpi"><div class="lab">Equity</div><div class="val" id="kpi-equity">$110.75</div>
+    <div class="kpi"><div class="lab">Equity</div><div class="val" id="kpi-equity">$103.96</div>
       <div class="note">from $100.00 start</div></div>
-    <div class="kpi"><div class="lab">Cash</div><div class="val">$75.90</div>
-      <div class="note">$40.72 deployed</div></div>
-    <div class="kpi"><div class="lab">Unrealized</div><div class="val down" id="kpi-unreal">-$5.86</div>
-      <div class="note">8 open</div></div>
+    <div class="kpi"><div class="lab">Cash</div><div class="val">$53.92</div>
+      <div class="note">$62.70 deployed</div></div>
+    <div class="kpi"><div class="lab">Unrealized</div><div class="val down" id="kpi-unreal">-$12.66</div>
+      <div class="note">12 open</div></div>
     <div class="kpi"><div class="lab">Realized</div><div class="val up">$16.62</div>
       <div class="note">5 settled &middot; 4W 1L</div></div>
-    <div class="kpi"><div class="lab">If all open win</div><div class="val up">$82.94</div>
-      <div class="note">on $40.72 staked &middot; +$42.22</div></div>
-    <div class="kpi"><div class="lab">Model spend</div><div class="val">$15.73</div>
-      <div class="note">36 forecasts &middot; real dollars</div></div>
+    <div class="kpi"><div class="lab">If all open win</div><div class="val up">$128.70</div>
+      <div class="note">on $62.70 staked &middot; +$66.00</div></div>
+    <div class="kpi"><div class="lab">Model spend</div><div class="val">$19.14</div>
+      <div class="note">44 forecasts &middot; real dollars</div></div>
   </div>
 
   <h2>Open positions</h2>
   <div class="scroll"><table>
     <tr><th>Market</th><th>Side</th><th class="n">Entry</th><th class="n">Now</th><th class="n">Contracts</th><th class="n">Stake</th><th class="n">Unrealized</th><th class="n">If it wins</th><th class="n">Odds now</th><th class="n">Closes</th></tr>
-    <tr data-mkt="601826">
+    <tr data-mkt="567688">
+      <td class="q">Netanyahu out by end of 2026?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.523</td>
+      <td class="n now">0.515</td>
+      <td class="n">11.2</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal down">-$0.08</td>
+      <td class="n"><strong>$11.16</strong> <span class="muted">(+$5.33)</span></td>
+      <td class="n muted odds">51.5%</td>
+      <td class="n">2027-01-01<br><span class="muted">120d left</span></td></tr><tr data-mkt="562793">
+      <td class="q">Will the Democratic Party control the Senate after the 2026 Midterm elections?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.492</td>
+      <td class="n now">0.485</td>
+      <td class="n">11.8</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal down">-$0.09</td>
+      <td class="n"><strong>$11.84</strong> <span class="muted">(+$6.01)</span></td>
+      <td class="n muted odds">48.5%</td>
+      <td class="n">2026-11-03<br><span class="muted">61d left</span></td></tr><tr data-mkt="4016628">
+      <td class="q">Will Bitcoin dip to $76,000 August 31-September 6?</td>
+      <td><span class="side yes">YES</span></td>
+      <td class="n">0.362</td>
+      <td class="n now">0.365</td>
+      <td class="n">12.4</td>
+      <td class="n">$4.49</td>
+      <td class="n unreal up">$0.04</td>
+      <td class="n"><strong>$12.40</strong> <span class="muted">(+$7.91)</span></td>
+      <td class="n muted odds">36.5%</td>
+      <td class="n">2026-09-07<br><span class="muted">4d left</span></td></tr><tr data-mkt="3748548">
+      <td class="q">Will SPD win between 5% and 7% of all valid second votes?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.563</td>
+      <td class="n now">0.545</td>
+      <td class="n">10.4</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal down">-$0.18</td>
+      <td class="n"><strong>$10.36</strong> <span class="muted">(+$4.53)</span></td>
+      <td class="n muted odds">54.5%</td>
+      <td class="n">2026-09-06<br><span class="muted">3d left</span></td></tr><tr data-mkt="601826">
       <td class="q">Will Flávio Bolsonaro win the 2026 Brazilian presidential election?</td>
       <td><span class="side no">NO</span></td>
       <td class="n">0.606</td>
-      <td class="n now">0.603</td>
+      <td class="n now">0.568</td>
       <td class="n">9.6</td>
       <td class="n">$5.83</td>
-      <td class="n unreal down">-$0.03</td>
+      <td class="n unreal down">-$0.37</td>
       <td class="n"><strong>$9.62</strong> <span class="muted">(+$3.79)</span></td>
-      <td class="n muted odds">60.3%</td>
-      <td class="n">2026-10-04<br><span class="muted">32d left</span></td></tr><tr data-mkt="3866138">
+      <td class="n muted odds">56.8%</td>
+      <td class="n">2026-10-04<br><span class="muted">31d left</span></td></tr><tr data-mkt="3866138">
       <td class="q">Will Elon Musk post 220-239 tweets from August 28 to September 4, 2026?</td>
       <td><span class="side no">NO</span></td>
       <td class="n">0.834</td>
-      <td class="n now">0.825</td>
+      <td class="n now">0.735</td>
       <td class="n">7.0</td>
       <td class="n">$5.83</td>
-      <td class="n unreal down">-$0.06</td>
+      <td class="n unreal down">-$0.69</td>
       <td class="n"><strong>$6.99</strong> <span class="muted">(+$1.16)</span></td>
-      <td class="n muted odds">82.5%</td>
-      <td class="n">2026-09-04<br><span class="muted">2d left</span></td></tr><tr data-mkt="1088472">
+      <td class="n muted odds">73.5%</td>
+      <td class="n">2026-09-04<br><span class="muted">1d left</span></td></tr><tr data-mkt="1088472">
       <td class="q">Will Carlos Alcaraz win the 2026 Men&#39;s US Open?</td>
       <td><span class="side no">NO</span></td>
       <td class="n">0.643</td>
-      <td class="n now">0.635</td>
+      <td class="n now">0.595</td>
       <td class="n">9.1</td>
       <td class="n">$5.83</td>
-      <td class="n unreal down">-$0.07</td>
+      <td class="n unreal down">-$0.44</td>
       <td class="n"><strong>$9.07</strong> <span class="muted">(+$3.23)</span></td>
-      <td class="n muted odds">63.5%</td>
-      <td class="n">2026-09-13<br><span class="muted">11d left</span></td></tr><tr data-mkt="4016630">
+      <td class="n muted odds">59.5%</td>
+      <td class="n">2026-09-13<br><span class="muted">10d left</span></td></tr><tr data-mkt="4016630">
       <td class="q">Will Bitcoin dip to $74,000 August 31-September 6?</td>
       <td><span class="side yes">YES</span></td>
       <td class="n">0.301</td>
-      <td class="n now">0.315</td>
+      <td class="n now">0.075</td>
       <td class="n">16.4</td>
       <td class="n">$4.95</td>
-      <td class="n unreal up">$0.22</td>
+      <td class="n unreal down">-$3.72</td>
       <td class="n"><strong>$16.41</strong> <span class="muted">(+$11.46)</span></td>
-      <td class="n muted odds">31.5%</td>
-      <td class="n">2026-09-07<br><span class="muted">5d left</span></td></tr><tr data-mkt="3866135">
+      <td class="n muted odds">7.5%</td>
+      <td class="n">2026-09-07<br><span class="muted">4d left</span></td></tr><tr data-mkt="3866135">
       <td class="q">Will Elon Musk post 200-219 tweets from August 28 to September 4, 2026?</td>
       <td><span class="side no">NO</span></td>
       <td class="n">0.714</td>
-      <td class="n now">0.615</td>
+      <td class="n now">0.465</td>
       <td class="n">7.9</td>
       <td class="n">$5.65</td>
-      <td class="n unreal down">-$0.78</td>
+      <td class="n unreal down">-$1.97</td>
       <td class="n"><strong>$7.91</strong> <span class="muted">(+$2.27)</span></td>
-      <td class="n muted odds">61.5%</td>
-      <td class="n">2026-09-04<br><span class="muted">2d left</span></td></tr><tr data-mkt="3775011">
+      <td class="n muted odds">46.5%</td>
+      <td class="n">2026-09-04<br><span class="muted">1d left</span></td></tr><tr data-mkt="3775011">
       <td class="q">Will Real Madrid CF win on 2026-09-04?</td>
       <td><span class="side no">NO</span></td>
       <td class="n">0.312</td>
-      <td class="n now">0.305</td>
+      <td class="n now">0.295</td>
       <td class="n">11.6</td>
       <td class="n">$3.63</td>
-      <td class="n unreal down">-$0.08</td>
+      <td class="n unreal down">-$0.19</td>
       <td class="n"><strong>$11.64</strong> <span class="muted">(+$8.02)</span></td>
-      <td class="n muted odds">30.5%</td>
-      <td class="n">2026-09-04<br><span class="muted">2d left</span></td></tr><tr data-mkt="3791921">
+      <td class="n muted odds">29.5%</td>
+      <td class="n">2026-09-04<br><span class="muted">1d left</span></td></tr><tr data-mkt="3791921">
       <td class="q">Will Newcastle United FC win on 2026-09-05?</td>
       <td><span class="side yes">YES</span></td>
       <td class="n">0.452</td>
-      <td class="n now">0.445</td>
+      <td class="n now">0.455</td>
       <td class="n">8.9</td>
       <td class="n">$4.01</td>
-      <td class="n unreal down">-$0.06</td>
+      <td class="n unreal up">$0.02</td>
       <td class="n"><strong>$8.86</strong> <span class="muted">(+$4.85)</span></td>
-      <td class="n muted odds">44.5%</td>
-      <td class="n">2026-09-05<br><span class="muted">3d left</span></td></tr><tr data-mkt="2491448">
+      <td class="n muted odds">45.5%</td>
+      <td class="n">2026-09-05<br><span class="muted">2d left</span></td></tr><tr data-mkt="2491448">
       <td class="q">Icelandic European Union membership negotiations referendum passes?</td>
       <td><span class="side yes">YES</span></td>
       <td class="n">0.402</td>
@@ -202,6 +242,110 @@
 
   <h2>What it is thinking</h2>
   <div class="cards"><article class="card">
+      <h3>Netanyahu out by end of 2026?</h3>
+      <div class="nums">
+        <span>Claude <strong>18.0%</strong></span>
+        <span class="muted">Market <strong>48.5%</strong></span>
+        <span class="down">Gap <strong>-30.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if Netanyahu actually ceases to be PM (a successor sworn in, death/incapacity, or formal resignation/removal announcement) at some point before 2027-01-01 04:59Z. Caretaker continuity after an election does not count; he must actually lose the office or announce resignation/removal.</p>
+      <p><span class="lbl">Base rate</span> Israeli incumbents rarely exit mid-term; Netanyahu has left office only twice in ~30 years, both after full electoral/coalition processes. Gap from election day to a new government being sworn in is historically 8-12 weeks, and 2 of 7 recent elections produced no government at all.</p>
+      <p><span class="lbl">For</span> [&quot;Statutory election falls in late October 2026, the single biggest catalyst, inside the window&quot;,&quot;2025 polling and coalition distress (Haredi draft law, Shas/UTJ withdrawals) suggested Netanyahu&#39;s bloc short of 61&quot;,&quot;Market resolves on mere announcement of resignation/removal, a lower bar than actual exit; pardon-for-retirement scenario would trigger it&quot;,&quot;If an early election already happened in H1 2026, a successor could plausibly be sworn in within the window&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Incumbent remains caretaker PM with full powers after an election until a successor is sworn in — so an Oct 2026 loss most likely yields a new PM in Jan-Mar 2027, resolving NO&quot;,&quot;Netanyahu has never resigned mid-term, including while under indictment since 2019&quot;,&quot;Even in 2021 (clearest analogue), the alternative coalition took ~11 weeks post-election to be sworn in&quot;,&quot;Tishrei holidays and winter-session scheduling compress the post-election government-formation timetable&quot;,&quot;Coalition formation by a fragmented opposition bloc is historically slow; two recent elections produced deadlock and repeat votes&quot;]</p>
+      <div class="foot muted">resolves 2027-01-01 &middot; forecast 2026-09-03 &middot; cost $0.31</div>
+    </article><article class="card">
+      <h3>Will CDU win the most seats in the 2026 Berlin state elections?</h3>
+      <div class="nums">
+        <span>Claude <strong>40.0%</strong></span>
+        <span class="muted">Market <strong>42.5%</strong></span>
+        <span class="down">Gap <strong>-2.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if the CDU wins the most seats in the Abgeordnetenhaus following the 20 Sept 2026 Berlin election (ties broken alphabetically; &#39;Other&#39; if no vote by 31 Dec 2026).</p>
+      <p><span class="lbl">Base rate</span> Extremely tight multi-party races (leads of 1-3 pts across institutes, larger than typical Berlin polling error of ~1.3-1.5 pp MAD) resolve roughly as coin-flips between the top two, with residual probability for third/fourth placed parties within 3 pts. Prior on the leading party in a 4-way cluster: ~35-45%.</p>
+      <p><span class="lbl">For</span> [&quot;Most recent published poll (2 Sept) has CDU first at 21% vs Linke 19%&quot;,&quot;INSA 14 Aug also had CDU narrowly first (20-19)&quot;,&quot;CDU is incumbent-led governing party with organizational strength and reliable older electorate; Berlin CDU outperformed polls in 2023&quot;,&quot;Lead-candidate switch to Evers produced a measurable bounce&quot;,&quot;Die Linke has never finished first in a Berlin state election&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Infratest dimap fieldwork ending 31 Aug has Linke ahead 20-19; Forsa in August had Linke clearly ahead at 21-22%&quot;,&quot;CDU polling 7-9 pts below its 2023 result; Wegner&#39;s forced withdrawal signals damaged brand after the January blackout&quot;,&quot;Die Linke has strong momentum and has repeatedly outperformed final polls in recent German elections (2025 federal)&quot;,&quot;Berlin&#39;s urban electorate skews strongly left; potential housing/expropriation referendum could lift left turnout&quot;,&quot;AfD (18%) and Greens (16-18%) are close enough to occasionally place first in a fragmented field&quot;]</p>
+      <div class="foot muted">resolves 2026-09-20 &middot; forecast 2026-09-03 &middot; cost $0.61</div>
+    </article><article class="card">
+      <h3>Will the Democratic Party control the Senate after the 2026 Midterm elections?</h3>
+      <div class="nums">
+        <span>Claude <strong>22.0%</strong></span>
+        <span class="muted">Market <strong>51.5%</strong></span>
+        <span class="down">Gap <strong>-29.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if Democrats (including independents caucusing with them) win at least 51 attributed Senate seats after the Nov 3, 2026 elections; a 50-50 split resolves NO because the VP is Republican. Democrats need a net gain of four seats from the current 53-47 Republican majority.</p>
+      <p><span class="lbl">Base rate</span> Out-party net gains of +4 or more Senate seats in a midterm: roughly 4 of the last ~12 cycles, and typically only with a favorable class map. Senate control flips in roughly 25-30% of cycles. Conditional on a needed +4 with Democrats defending GA/MI/NH/MN, base rate is lower, ~15-20%.</p>
+      <p><span class="lbl">For</span> [&quot;Cook moved Iowa and Texas from Lean R to Toss-up in late Aug 2026 — evidence of a genuinely favorable environment&quot;,&quot;Six Republican retirements vs four Democratic; open seats flip more often&quot;,&quot;Historic midterm penalty against the president&#39;s party&quot;,&quot;Democrats expanding the map into Kansas and Mississippi suggests confidence backed by internal data&quot;,&quot;Close Senate races tend to break uniformly with the environment — a wave could deliver several at once&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Net +4 requirement with an unfavorable arithmetic starting point (53-47) and no tiebreak help&quot;,&quot;Even optimistic paths require winning at least two of Texas/Iowa/Ohio/Alaska/Kansas, all states Republicans have carried decisively in recent presidential years&quot;,&quot;Democrats must also defend Georgia and Michigan, both perennial toss-ups&quot;,&quot;Susan Collins has repeatedly outperformed polls in Maine&quot;,&quot;Independent candidates in NE/MT/ID/SD may win without counting for Democrats under this market&#39;s caucus rule&quot;,&quot;Recent Senate cycles (2022, 2024) showed Republican strength in red-state Senate races even amid split-ticket dynamics&quot;]</p>
+      <div class="foot muted">resolves 2026-11-03 &middot; forecast 2026-09-03 &middot; cost $0.40</div>
+    </article><article class="card">
+      <h3>Will Bitcoin reach $80,000 August 31-September 6?</h3>
+      <div class="nums">
+        <span>Claude <strong>30.0%</strong></span>
+        <span class="muted">Market <strong>35.5%</strong></span>
+        <span class="down">Gap <strong>-5.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if a Binance BTC/USDT 1-minute candle high reaches $80,000 or more at some point from Aug 31 00:00 ET through Sep 6 23:59 ET. Roughly half the window has already passed with no reported print at/above $80K, so effectively it needs a ~+2.7% rally from ~$77.9K in the remaining ~3.7 days.</p>
+      <p><span class="lbl">Base rate</span> Barrier-touch estimate: with BTC daily sigma ~2.0–2.5% in current consolidation, 3.7-day sigma ≈ 3.9–4.8%; reflection-principle touch probability for a 2.7% OTM barrier is ~45–57%. Discounted for the observed negative short-term drift/failed prior attempts.</p>
+      <p><span class="lbl">For</span> [&quot;$80K–$81.2K was traded as recently as Aug 25–27, so the level is reachable under current liquidity&quot;,&quot;Daily ATR ~$2,666 (~3.4%) exceeds the required move; a single strong day could do it&quot;,&quot;Record August ETF inflows (~$3B+), Saylor resumed buying, Fear &amp; Greed at 65 (Greed)&quot;,&quot;Price still above EMA20/50/200 — structure intact&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Every observation Aug 31–Sep 3 sits in $77.1K–$78.6K; steady daily drift lower all window&quot;,&quot;Daily MACD histogram turned negative; momentum cooling&quot;,&quot;Hawkish Fed repricing (rate hike expectations) weighing on crypto and metals&quot;,&quot;$80K has repeatedly failed as resistance; late-Aug spike immediately erased&quot;,&quot;Only ~3.7 days left, two of which are low-liquidity weekend days with no ETF flow prints&quot;]</p>
+      <div class="foot muted">resolves 2026-09-07 &middot; forecast 2026-09-03 &middot; cost $0.40</div>
+    </article><article class="card">
+      <h3>Will Bitcoin dip to $76,000 August 31-September 6?</h3>
+      <div class="nums">
+        <span>Claude <strong>46.0%</strong></span>
+        <span class="muted">Market <strong>35.5%</strong></span>
+        <span class="up">Gap <strong>+10.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES if any Binance BTC/USDT 1-minute candle low between 12:00 AM ET Aug 31 and 11:59 PM ET Sep 6, 2026 is ≤ $76,000. A single wick suffices; earlier days in the window count.</p>
+      <p><span class="lbl">Base rate</span> Probability BTC touches a level ~2.5% below spot within ~3.5 remaining days, given daily realized range ~3.4% (ATR) and daily sigma ~2-2.5%: reflection-principle estimate gives ~50-60%; adjusted downward slightly for weekend vol decay.</p>
+      <p><span class="lbl">For</span> [&quot;Sep 2 low already within ~$672 (0.9%) of the trigger on a composite quote; Binance USDT wicks often run lower&quot;,&quot;Bearish MACD crossover, loss of the $77,057 range floor intraday&quot;,&quot;Heavy long liquidation stack below price on Binance&quot;,&quot;September seasonal weakness and live geopolitical headline risk&quot;,&quot;One average daily range (3.4%) exceeds the required 2.5% move&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Price bounced back to ~$77.9k and holds above EMA20/50/200&quot;,&quot;Strong August ETF inflows and resumed corporate buying (Strategy $370m) provide dip demand&quot;,&quot;Fear &amp; Greed at 65 (Greed) — dip-buying regime&quot;,&quot;Weekend liquidity thinness cuts both ways but weekend realized vol is typically lower&quot;,&quot;Trigger requires ~2.5% additional decline in a shortening window&quot;]</p>
+      <div class="foot muted">resolves 2026-09-07 &middot; forecast 2026-09-03 &middot; cost $0.42</div>
+    </article><article class="card">
+      <h3>Will Tottenham Hotspur FC win on 2026-09-05?</h3>
+      <div class="nums">
+        <span>Claude <strong>37.0%</strong></span>
+        <span class="muted">Market <strong>33.5%</strong></span>
+        <span class="up">Gap <strong>+3.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Tottenham must win the Premier League away match at Nottingham Forest on 5 Sep 2026 in 90 minutes + stoppage time; draw or loss resolves NO.</p>
+      <p><span class="lbl">Base rate</span> Premier League away teams win ~30% of matches; away side priced as narrow favourite typically ~38-42% win probability.</p>
+      <p><span class="lbl">For</span> [&quot;Sofascore reports Spurs as narrow market favourite&quot;,&quot;Heavy summer spending (Marmoush, Savio) suggests squad quality above Forest&quot;,&quot;Forest only 1 point from 2 games, also struggling&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Spurs lost both league games, bottom of table, poor 2025-26 baseline (17th)&quot;,&quot;Away fixture at The City Ground, a difficult venue&quot;,&quot;New manager&#39;s system possibly still bedding in; goal-scoring issues (0 goals vs Newcastle)&quot;]</p>
+      <div class="foot muted">resolves 2026-09-05 &middot; forecast 2026-09-03 &middot; cost $0.42</div>
+    </article><article class="card">
+      <h3>Will SPD win between 7% and 9% of all valid second votes?</h3>
+      <div class="nums">
+        <span>Claude <strong>48.0%</strong></span>
+        <span class="muted">Market <strong>44.5%</strong></span>
+        <span class="up">Gap <strong>+3.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES iff SPD&#39;s official/preliminary Zweitstimmen share in the 6 Sep 2026 Sachsen-Anhalt Landtag election falls in the 7%–9% bracket (with exact 7.0% and 9.0% boundary values resolving into the higher bracket, i.e. 7.0% counts YES, 9.0% counts NO/into next bracket per the stated rule).</p>
+      <p><span class="lbl">Base rate</span> SPD in Sachsen-Anhalt: 2011 21.5%, 2016 10.6%, 2021 8.4%. SPD as a minor party in recent eastern Landtag elections: Saxony 7.3% (2024), Thuringia 6.1% (2024). Cluster is roughly 6–9%, so a 2-point bracket at 7–9 captures maybe half of the plausible density.</p>
+      <p><span class="lbl">For</span> [&quot;2021 result (8.4%) sits inside the band&quot;,&quot;Recalled 2025/2026 polling ~7–8% centers on the band&quot;,&quot;Boundary rule puts an exact 7.0% into YES&quot;,&quot;Katja Pähle incumbency/fraction-leader visibility gives some floor&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Monotonic decline across three cycles suggests continued erosion below 7%&quot;,&quot;Saxony (7.3%) and Thuringia (6.1%) 2024 show SPD sliding to 6–7% in eastern states where it is a minor party&quot;,&quot;Strong 2021 precedent of SPD sharply underperforming polls due to late CDU consolidation against AfD&quot;,&quot;Die Linke&#39;s 2025 national surge competes for the same eastern left electorate&quot;]</p>
+      <div class="foot muted">resolves 2026-09-06 &middot; forecast 2026-09-03 &middot; cost $0.35</div>
+    </article><article class="card">
+      <h3>Will SPD win between 5% and 7% of all valid second votes?</h3>
+      <div class="nums">
+        <span>Claude <strong>20.0%</strong></span>
+        <span class="muted">Market <strong>45.0%</strong></span>
+        <span class="down">Gap <strong>-25.0pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">medium confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> SPD&#39;s share of valid second votes in the 6 Sep 2026 Sachsen-Anhalt Landtagswahl must be at least 5% and below 7.0% (a reported exactly-7.0% resolves into the next higher bracket). Effectively: 5.0% \u2264 SPD \u2264 ~6.9%.</p>
+      <p><span class="lbl">Base rate</span> Polls in final two weeks put SPD at 7\u20139% (Infratest 8%, FGW 9%, Pollytix 7%). Small-party polling error in German state elections is typically ~1\u20131.5pp; probability of a final result falling &gt;1pp below the poll average is roughly 20\u201330%. SPD has never scored below 8.4% in Sachsen-Anhalt.</p>
+      <p><span class="lbl">For</span> [&quot;2021 precedent: SPD underperformed final polls (~10\\u201311% polled vs 8.4% actual) amid a CDU squeeze in a CDU-vs-AfD framed race&quot;,&quot;INSA (May 2026) had SPD at 6%, showing institute spread includes the bracket&quot;,&quot;Pollytix (early Aug) had SPD at 7%, only marginally above the bracket ceiling&quot;,&quot;Tactical anti-AfD voting could consolidate behind CDU or Linke, hollowing out SPD&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Latest polls show SPD at 8\\u20139% with an upward campaign trend&quot;,&quot;Bracket requires a &gt;1.1pp downward miss from the poll average&quot;,&quot;SPD as incumbent junior partner with recognizable ministers has some floor; also benefits from &#39;safe non-AfD&#39; tactical logic&quot;,&quot;Tie-break rule pushes any 7.0% result out of this bracket, removing the most likely near-boundary outcome&quot;]</p>
+      <div class="foot muted">resolves 2026-09-06 &middot; forecast 2026-09-03 &middot; cost $0.50</div>
+    </article><article class="card">
       <h3>Will Bitcoin reach $80,000 in September?</h3>
       <div class="nums">
         <span>Claude <strong>70.0%</strong></span>
@@ -253,115 +397,11 @@
       <p><span class="lbl">For</span> [&quot;Musk&#39;s weekly totals are volatile and 220–260 weeks have occurred in 2026&quot;,&quot;~30% of window still open; a burst could add 60–80 posts&quot;,&quot;Bucket boundaries are wide (20 posts), so pace need only be modestly above trend&quot;]</p>
       <p><span class="lbl">Against</span> [&quot;Adjacent full-week window near-certain in 160–179, far below 220&quot;,&quot;Two consecutive short windows both in 40–64 with no acceleration&quot;,&quot;200–219 priced at only 21% on Aug 31, implying 220–239 is a higher tail bucket&quot;,&quot;Next week&#39;s market quoted around 180–199, suggesting continued moderate pace&quot;]</p>
       <div class="foot muted">resolves 2026-09-04 &middot; forecast 2026-09-02 &middot; cost $0.41</div>
-    </article><article class="card">
-      <h3>Will Carlos Alcaraz win the 2026 Men&#39;s US Open?</h3>
-      <div class="nums">
-        <span>Claude <strong>27.0%</strong></span>
-        <span class="muted">Market <strong>36.5%</strong></span>
-        <span class="down">Gap <strong>-9.5pp</strong></span>
-      </div>
-      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
-      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if Carlos Alcaraz wins the 2026 US Open men&#39;s singles title (final scheduled 13 Sep 2026). Any loss/withdrawal before then resolves NO.</p>
-      <p><span class="lbl">Base rate</span> Dominant top-2 seed&#39;s unconditional chance of winning a given slam ~20-35%; conditional on reaching R2 with a thinned draw, somewhat higher. No man has defended the US Open since Federer (2008). Winning a slam in first event back from 4+ month layoff is rare but has precedent (Federer AO 2017, Nadal AO 2022).</p>
-      <p><span class="lbl">For</span> [&quot;Defending champion, 2-time USO winner, AO 2026 champion — best-in-field ceiling&quot;,&quot;Sinner absent; Djokovic out in R1 — no proven slam champion left besides Alcaraz&quot;,&quot;Clean straight-sets comeback win, reported pain-free wrist&quot;,&quot;Hard-court surface suits him; Ashe experience&quot;]</p>
-      <p><span class="lbl">Against</span> [&quot;First tournament back from a 4.5-month wrist injury; match sharpness untested over five sets&quot;,&quot;Commentary flagging risk of rushing wrist injuries; Alcaraz himself uncertain how far he&#39;d go&quot;,&quot;Six more wins needed — even 85% per-match implies ~38%; realistically lower given rust&quot;,&quot;Historical difficulty defending the US Open title&quot;,&quot;Result of tonight&#39;s R2 vs Faria unknown&quot;]</p>
-      <div class="foot muted">resolves 2026-09-13 &middot; forecast 2026-09-02 &middot; cost $0.47</div>
-    </article><article class="card">
-      <h3>Will Bitcoin dip to $74,000 August 31-September 6?</h3>
-      <div class="nums">
-        <span>Claude <strong>42.0%</strong></span>
-        <span class="muted">Market <strong>29.5%</strong></span>
-        <span class="up">Gap <strong>+12.5pp</strong></span>
-      </div>
-      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
-      <p><span class="lbl">Reads the criteria as</span> YES requires any Binance BTC/USDT 1-minute candle low at or below $74,000 between 00:00 ET Aug 31 and 23:59 ET Sep 6, 2026. Prints already made Aug 31–Sep 2 count, but per the brief the week-to-date low is ~$76,400, so it needs a new ~3.3% decline in the remaining ~4.2 days.</p>
-      <p><span class="lbl">Base rate</span> Barrier-touch model: BTC daily vol in this regime ~2.5%, so ~4.2 days gives ~5.1% sigma; a 3.3% downside barrier implies touch probability ~2*Phi(-0.65) ≈ 0.5 under zero drift. Adjusted modestly downward for realized-vol overestimation and mean-reversion after news shocks.</p>
-      <p><span class="lbl">For</span> [&quot;Live geopolitical escalation with US strikes near Strait of Hormuz; prior episodes in 2026 pushed BTC below $77k and toward $62k&quot;,&quot;Unusual hawkish regime (66% odds of a September hike) pressuring risk assets&quot;,&quot;Downtrend in place: from $81.4k local high Aug 28 to ~$76.5k by Sep 2&quot;,&quot;Jobs report Sep 4 is a named catalyst; strong data would add hike pressure&quot;,&quot;Weekend low-liquidity wicks included in the window&quot;,&quot;2026 has traded well below $74k earlier, so the level is not a structural floor&quot;]</p>
-      <p><span class="lbl">Against</span> [&quot;Requires a fresh ~3.3% drop in only ~4 days; most 4-day windows do not deliver that&quot;,&quot;BTC has been relative outperformer within crypto during this shock (down only ~1% vs alts -3%)&quot;,&quot;Record 2026 monthly ETF inflows (~$3bn in August, $924m in the Aug 24–28 week) provide a bid&quot;,&quot;Aug 31 rebound suggested dip-buying rather than trend reversal&quot;,&quot;News-driven geopolitical dips in this conflict have repeatedly been bought back&quot;]</p>
-      <div class="foot muted">resolves 2026-09-07 &middot; forecast 2026-09-02 &middot; cost $0.43</div>
-    </article><article class="card">
-      <h3>Will WTI Crude Oil (WTI) hit (HIGH) $95 in September?</h3>
-      <div class="nums">
-        <span>Claude <strong>55.0%</strong></span>
-        <span class="muted">Market <strong>52.5%</strong></span>
-        <span class="up">Gap <strong>+2.5pp</strong></span>
-      </div>
-      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
-      <p><span class="lbl">Reads the criteria as</span> Resolves YES if, at any point in a September 2026 trading session (after market creation), a 1-minute candle for the active-month WTI CL futures contract (CLV26 through Sept 17, then CLX26) prints a High at or above $95.00 per Pyth data.</p>
-      <p><span class="lbl">Base rate</span> Touch-probability for a ~5-8% upside move in a one-month window with a reflecting-barrier approximation: with realized annualized vol of ~50-65% (current crisis regime), monthly sigma ~15-19%, P(max touch +6-7%) ≈ 0.6-0.7 under zero drift; historically in calm regimes this would be ~20-30%.</p>
-      <p><span class="lbl">For</span> [&quot;Two consecutive sessions of sharp gains (+5.2% Sept 1, +2.3% Sept 2) to six-week highs&quot;,&quot;Active military escalation: supertankers struck, US strikes on Larak Island, threats against Kharg Island&quot;,&quot;Global inventories at multi-year lows; SPR near minimum operational levels — no policy buffer&quot;,&quot;WTI has already traded above $95 (reportedly up to ~$111) earlier in 2026, so the level is well within this year&#39;s range&quot;,&quot;Only ~$4-7 of upside needed; single-day 5% moves have occurred repeatedly this year&quot;]</p>
-      <p><span class="lbl">Against</span> [&quot;Ambiguity in current price; if front-month is nearer $87-88, the required move is ~8%&quot;,&quot;Roll to November contract on Sept 17 lowers the active-month price in a backwardated market, raising the effective hurdle for the final two weeks&quot;,&quot;Any credible Hormuz reopening signal has historically triggered rapid double-digit declines (June and late-July 2026 precedents)&quot;,&quot;Consensus forecasts and IEA demand downgrades (-1.6 mb/d) point to mean reversion below spot&quot;,&quot;Wide Brent–WTI spread (~$15) means WTI lags the geopolitical premium captured by Brent&quot;]</p>
-      <div class="foot muted">resolves 2026-10-01 &middot; forecast 2026-09-02 &middot; cost $0.53</div>
-    </article><article class="card">
-      <h3>Will Elon Musk post 180-199 tweets from August 28 to September 4, 2026?</h3>
-      <div class="nums">
-        <span>Claude <strong>27.0%</strong></span>
-        <span class="muted">Market <strong>27.5%</strong></span>
-        <span class="down">Gap <strong>-0.5pp</strong></span>
-      </div>
-      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
-      <p><span class="lbl">Reads the criteria as</span> Polymarket&#39;s xtracker Post Counter must show between 180 and 199 (inclusive) main-feed posts/quote posts/reposts by @elonmusk in the window Aug 28 12:00 PM ET to Sep 4 12:00 PM ET, 2026.</p>
-      <p><span class="lbl">Base rate</span> Musk&#39;s weekly tracker totals cluster roughly 150–250; a single 20-wide bucket among ~4-5 plausible adjacent buckets gives a base rate of roughly 20-30%, with 180-199 often near the mode.</p>
-      <p><span class="lbl">For</span> [&quot;Two settled 2-day sub-windows within this period both landed 40-64 (20-32/day), which extrapolates to ~140-224 for 7 days, centered near 180-199&quot;,&quot;Market pricing has 180-199 as the leading bucket at ~26-28%&quot;,&quot;Prior week (Aug 7-14) resolved in exactly this band, suggesting current cadence sits here&quot;]</p>
-      <p><span class="lbl">Against</span> [&quot;Overlapping Aug 25-Sep 1 weekly appeared to lean 160-179, implying a pace slightly below this band&quot;,&quot;Historical averages of 30-50 posts/day would imply totals above 200&quot;,&quot;Musk&#39;s posting is bursty; a single high-activity day can shift the total out of a 20-wide bucket&quot;,&quot;Narrow bucket means even a good central estimate leaves majority probability elsewhere&quot;]</p>
-      <div class="foot muted">resolves 2026-09-04 &middot; forecast 2026-09-02 &middot; cost $0.48</div>
-    </article><article class="card">
-      <h3>Will Luiz Inácio Lula da Silva win the 2026 Brazilian presidential election?</h3>
-      <div class="nums">
-        <span>Claude <strong>54.0%</strong></span>
-        <span class="muted">Market <strong>55.5%</strong></span>
-        <span class="down">Gap <strong>-1.5pp</strong></span>
-      </div>
-      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
-      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if Lula is the winner of the 2026 Brazilian presidential election (including a possible 25 October runoff), per credible reporting/TSE official results. If the winner isn&#39;t known by 30 June 2027 it resolves &#39;Other&#39;. Note the stated resolution timestamp (2026-10-04T00:00Z) precedes voting, so actual settlement must come later.</p>
-      <p><span class="lbl">Base rate</span> Brazilian incumbents seeking re-election since 1989: 3 wins, 1 loss (75%, n=4); 6 of 8 elections went to a runoff; Lula personally 3-3 in presidential races, undefeated in runoffs.</p>
-      <p><span class="lbl">For</span> [&quot;Incumbency advantage in Brazil historically strong (75% of re-election bids won)&quot;,&quot;Lula led hypothetical head-to-heads against every named rival through late 2025&quot;,&quot;Bolsonaro ineligible and imprisoned, removing the right&#39;s strongest vote-getter&quot;,&quot;Rally-round-the-flag boost from the 2025 US 50% tariff dispute lifted Lula&#39;s numbers&quot;,&quot;Lula has never lost a second round; PT machine and large coalition TV time&quot;]</p>
-      <p><span class="lbl">Against</span> [&quot;Combined right-wing bloc vote exceeded Lula&#39;s in 2025 polling; consolidation could flip the race&quot;,&quot;Brazilian polls have understated right-wing candidates by ~5 points in recent cycles&quot;,&quot;Lula&#39;s age (81 on election day) and December 2024 subdural haematoma create candidacy/health risk&quot;,&quot;Early-2025 approval was the worst of his term, driven by food inflation — a persistent vulnerability&quot;,&quot;Global anti-incumbent environment; any Lula-adjacent scandal or economic shock in the unobserved 2026 window&quot;,&quot;No 2026 information at all — the decisive campaign period is unknown to the forecaster&quot;]</p>
-      <div class="foot muted">resolves 2026-10-04 &middot; forecast 2026-09-02 &middot; cost $0.27</div>
-    </article><article class="card">
-      <h3>Will there be no change in Fed interest rates after the September 2026 meeting?</h3>
-      <div class="nums">
-        <span>Claude <strong>34.0%</strong></span>
-        <span class="muted">Market <strong>40.5%</strong></span>
-        <span class="down">Gap <strong>-6.5pp</strong></span>
-      </div>
-      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
-      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if the FOMC&#39;s September 15-16, 2026 statement leaves the upper bound of the target range at 3.75% (unchanged from pre-meeting level). Any hike or cut of 25bp+ resolves NO.</p>
-      <p><span class="lbl">Base rate</span> Unconditionally ~70-80% of FOMC meetings end with no change, but conditional on futures pricing a move at ~60-66% two weeks out, the Fed delivers the priced move far more often than not; historical hit rate for moves priced &gt;60% near the meeting is high (~75-85%).</p>
-      <p><span class="lbl">For</span> [&quot;Committee held in July despite three hawkish dissents and near-half of members favoring a hike — hawkish sentiment has twice failed to produce a move&quot;,&quot;Labor market near stall speed (July -23k, 3-month average ~breakeven, unemployment 4.1%) argues against tightening&quot;,&quot;Goldman Sachs expects no change through the rest of 2026&quot;,&quot;Market odds have been highly unstable (33% → 30% → 66% hike within weeks), so the current hike pricing is fragile&quot;,&quot;July core PCE came in line, described as giving the Fed room to hold&quot;,&quot;Political pressure from the administration and midterms cuts against hiking&quot;]</p>
-      <p><span class="lbl">Against</span> [&quot;CME FedWatch ~66% hike odds as of Aug 31; Polymarket 57-66% on Sep 2 — modal market view is a hike&quot;,&quot;Warsh explicitly signaled at Jackson Hole that rates may have to rise in coming months, an unusually clear pre-blackout signal&quot;,&quot;Core inflation at 3.3% y/y, far from 2% target, with energy/supply shocks from the Iran conflict and Canada trade war&quot;,&quot;Fed rarely surprises markets against a clearly signaled chair intention; September is an SEP meeting suitable for a policy pivot&quot;,&quot;J.P. Morgan shifted base case to a September hike&quot;]</p>
-      <div class="foot muted">resolves 2026-09-16 &middot; forecast 2026-09-02 &middot; cost $0.52</div>
-    </article><article class="card">
-      <h3>Will the Fed increase interest rates by 25 bps after the September 2026 meeting?</h3>
-      <div class="nums">
-        <span>Claude <strong>62.0%</strong></span>
-        <span class="muted">Market <strong>57.5%</strong></span>
-        <span class="up">Gap <strong>+4.5pp</strong></span>
-      </div>
-      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
-      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if the FOMC&#39;s Sept 15-16, 2026 statement raises the upper bound of the target federal funds range by exactly 25 bps (to 4.00%) versus the pre-meeting 3.75%. A hold, cut, or +50 bp resolves NO.</p>
-      <p><span class="lbl">Base rate</span> Fed has not hiked in ~22 meetings since July 2023 (0%), but the conditional reference class is &#39;market pricing ~65% two weeks before a meeting,&#39; which historically resolves YES roughly 60-70% of the time, with two-week pricing being noisier than eve-of-meeting pricing.</p>
-      <p><span class="lbl">For</span> [&quot;CME FedWatch at 66.1% hike odds as of 2026-08-31, rising after Jackson Hole&quot;,&quot;3 dissents for +25bp at the July meeting — an unusually strong signal of imminent policy turn&quot;,&quot;June dot plot: 9 of 18 dots favored at least one 2026 hike&quot;,&quot;Chair Warsh explicitly said underlying inflation is not slowing; inflation above target for 5+ years&quot;,&quot;Rising oil prices and 10-year yields at highest since Oct 2023 reinforcing hawkish pricing&quot;,&quot;Futures earlier priced two hikes in 2026 (Sept and Dec)&quot;]</p>
-      <p><span class="lbl">Against</span> [&quot;Zero hikes in the last ~22 meetings; reversing from a cut cycle to a hike is historically rare&quot;,&quot;Pricing has swung 30+ points twice this summer (Aug 7 dovish collapse on jobs miss, Aug 28 hawkish reversal) — highly unstable&quot;,&quot;July jobs report was a big miss; labor softening argues against hiking&quot;,&quot;All three dissents came from regional presidents; no evidence governors have moved&quot;,&quot;Analyst commentary cited cooler inflation and softer hiring, arguing no September consensus&quot;,&quot;Warsh deliberately avoids signaling, so hawkish tone may not equal commitment&quot;,&quot;Two more major data releases before the meeting could flip pricing again&quot;]</p>
-      <div class="foot muted">resolves 2026-09-16 &middot; forecast 2026-09-02 &middot; cost $0.52</div>
-    </article><article class="card">
-      <h3>Will Bitcoin dip to $72,500 in September?</h3>
-      <div class="nums">
-        <span>Claude <strong>53.0%</strong></span>
-        <span class="muted">Market <strong>52.0%</strong></span>
-        <span class="up">Gap <strong>+1.0pp</strong></span>
-      </div>
-      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
-      <p><span class="lbl">Reads the criteria as</span> YES iff at any point between 00:00 ET Sep 1 and 23:59 ET Sep 30, 2026, a Binance BTC/USDT 1-minute candle prints a low ≤ $72,500. A single wick suffices.</p>
-      <p><span class="lbl">Base rate</span> Barrier-touch model: starting ~$77,600-78,400, threshold is ~6.6-7.5% below spot. With BTC monthly realized sigma ~9-12% in the current regime, P(min &lt; -7%) ≈ 2·N(-0.07/0.105) ≈ 0.45-0.55. Also, BTC traded below $72,500 in at least 4 of 8 months of 2026, including as recently as August (low ~$62.3k).</p>
-      <p><span class="lbl">For</span> [&quot;BTC printed lows near $62k just weeks ago — $72,500 is squarely inside recent trading range, not a tail&quot;,&quot;Extremely high realized volatility means a 7% intramonth drawdown is routine&quot;,&quot;Structural bear-market narratives (Bernstein: drawdown milder than prior cycles; analysts projecting further 30% decline)&quot;,&quot;Corporate/ETF supply overhang; Strategy selling&quot;,&quot;Wick-only requirement makes YES easier than a sustained move&quot;]</p>
-      <p><span class="lbl">Against</span> [&quot;Strong upward momentum: +24% in August, price at the upper end of recent range&quot;,&quot;$72,000–$72,500 is widely cited as structural support (Standard Chartered floor; former-ATH zone $69k–$73k), which can attract defensive bids&quot;,&quot;Algorithmic projections (low value) put September floor above $78k&quot;,&quot;Needs a ~7% decline; if the rally has a durable catalyst (Fed cuts, ETF inflows), price could hold above&quot;]</p>
-      <div class="foot muted">resolves 2026-10-01 &middot; forecast 2026-09-02 &middot; cost $0.50</div>
     </article></div>
 </div>
 <script>
 (function(){
-  var POS = [{"id":"601826","side":"NO","contracts":9.621856334641752,"stake":5.830989266637921},{"id":"3866138","side":"NO","contracts":6.990336590107201,"stake":5.830989266637921},{"id":"1088472","side":"NO","contracts":9.065592765295277,"stake":5.830989266637921},{"id":"4016630","side":"YES","contracts":16.405023987592315,"stake":4.946114732259082},{"id":"3866135","side":"NO","contracts":7.9148147473475605,"stake":5.647616062969851},{"id":"3775011","side":"NO","contracts":11.644821788216476,"stake":3.6279442281188428},{"id":"3791921","side":"YES","contracts":8.862874610080711,"stake":4.008235042409002},{"id":"2491448","side":"YES","contracts":12.437810945273633,"stake":5}];
+  var POS = [{"id":"567688","side":"NO","contracts":11.15765263420957,"stake":5.830989266637921},{"id":"562793","side":"NO","contracts":11.840774224059135,"stake":5.830989266637921},{"id":"4016628","side":"YES","contracts":12.399334371698131,"stake":4.486079175680383},{"id":"3748548","side":"NO","contracts":10.360677446051744,"stake":5.830989266637921},{"id":"601826","side":"NO","contracts":9.621856334641752,"stake":5.830989266637921},{"id":"3866138","side":"NO","contracts":6.990336590107201,"stake":5.830989266637921},{"id":"1088472","side":"NO","contracts":9.065592765295277,"stake":5.830989266637921},{"id":"4016630","side":"YES","contracts":16.405023987592315,"stake":4.946114732259082},{"id":"3866135","side":"NO","contracts":7.9148147473475605,"stake":5.647616062969851},{"id":"3775011","side":"NO","contracts":11.644821788216476,"stake":3.6279442281188428},{"id":"3791921","side":"YES","contracts":8.862874610080711,"stake":4.008235042409002},{"id":"2491448","side":"YES","contracts":12.437810945273633,"stake":5}];
   var el = function(s,r){return (r||document).querySelector(s)};
   var money = function(n){return (n<0?"-":"")+"$"+Math.abs(n).toFixed(2)};
   var status = el("#status");
