@@ -1,0 +1,512 @@
+<title>Poly Paper Desk</title>
+<style>
+  :root{--bg:#fbfaf9;--panel:#fff;--ink:#1a1a19;--muted:#6b6b68;--line:#e5e3e0;
+        --up:#0f7a4d;--down:#b3261e;--accent:#4a5d7e;--warn:#8a6d1f;--chip:#f0eeec}
+  @media (prefers-color-scheme:dark){:root:not([data-theme=light]){
+        --bg:#16161a;--panel:#1e1e23;--ink:#eceaea;--muted:#9a9a99;--line:#32323a;
+        --up:#4ade80;--down:#f87171;--accent:#9db2d8;--warn:#d4b95e;--chip:#2a2a31}}
+  :root[data-theme=dark]{--bg:#16161a;--panel:#1e1e23;--ink:#eceaea;--muted:#9a9a99;
+        --line:#32323a;--up:#4ade80;--down:#f87171;--accent:#9db2d8;--warn:#d4b95e;--chip:#2a2a31}
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 20px 64px;background:var(--bg);color:var(--ink);
+       font:15px/1.55 ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}
+  .wrap{max-width:1120px;margin:0 auto}
+  h1{font-size:22px;margin:0 0 2px;letter-spacing:-.01em}
+  .sub{color:var(--muted);font-size:13px;margin-bottom:24px}
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:28px}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .kpi .lab{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .kpi .val{font-size:25px;font-variant-numeric:tabular-nums;margin-top:5px;letter-spacing:-.02em}
+  .kpi .note{font-size:12px;color:var(--muted);margin-top:2px}
+  h2{font-size:14px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);
+     margin:32px 0 10px;font-weight:600}
+  .scroll{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:10px}
+  table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+  th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+     color:var(--muted);font-weight:600;padding:10px 12px;border-bottom:1px solid var(--line)}
+  td{padding:10px 12px;border-bottom:1px solid var(--line)}
+  tr:last-child td{border-bottom:none}
+  .q{max-width:340px}
+  .n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .up{color:var(--up)} .down{color:var(--down)} .muted{color:var(--muted)}
+  .side{font-size:11px;font-weight:600;padding:2px 7px;border-radius:4px;background:var(--chip)}
+  .side.yes{color:var(--up)} .side.no{color:var(--down)}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:12px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:15px 17px}
+  .card h3{font-size:15px;margin:0 0 9px;line-height:1.35;letter-spacing:-.01em}
+  .nums{display:flex;gap:14px;flex-wrap:wrap;font-size:13px;font-variant-numeric:tabular-nums;
+        padding-bottom:9px;border-bottom:1px solid var(--line)}
+  .tags{margin:9px 0}
+  .tag{display:inline-block;font-size:11px;background:var(--chip);color:var(--muted);
+       padding:2px 7px;border-radius:4px;margin-right:5px}
+  .tag.warn{color:var(--warn)}
+  .card p{margin:7px 0;font-size:13px;color:var(--ink)}
+  .lbl{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.06em;
+       color:var(--muted);margin-bottom:1px}
+  .foot{font-size:11px;margin-top:11px;padding-top:9px;border-top:1px solid var(--line)}
+  .empty{background:var(--panel);border:1px dashed var(--line);border-radius:10px;
+         padding:22px;color:var(--muted);font-size:14px}
+  .pill{display:inline-block;font-size:11px;background:var(--chip);color:var(--muted);
+        padding:2px 8px;border-radius:99px;font-variant-numeric:tabular-nums}
+  .pill.live{color:var(--up)}
+  .banner{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--accent);
+          border-radius:8px;padding:11px 14px;font-size:13px;color:var(--muted);margin-bottom:22px}
+</style>
+<div class="wrap" data-cash="46.4242">
+  <h1>Poly Paper Desk</h1>
+  <div class="sub">Simulated positions only &middot; no money can move &middot;
+    <span id="status" class="pill">snapshot 2026-09-05 11:14 UTC</span></div>
+
+  <div class="banner">Open positions are marked to the live market price. Realized P&amp;L counts only
+  resolved markets &mdash; most questions here run 2&ndash;120 days, so early on nearly everything sits unrealized.</div>
+
+  <div class="kpis">
+    <div class="kpi"><div class="lab">Equity</div><div class="val" id="kpi-equity">$107.28</div>
+      <div class="note">from $100.00 start</div></div>
+    <div class="kpi"><div class="lab">Cash</div><div class="val">$46.42</div>
+      <div class="note">$74.65 deployed</div></div>
+    <div class="kpi"><div class="lab">Unrealized</div><div class="val down" id="kpi-unreal">-$13.79</div>
+      <div class="note">14 open</div></div>
+    <div class="kpi"><div class="lab">Realized</div><div class="val up">$21.07</div>
+      <div class="note">8 settled &middot; 6W 2L</div></div>
+    <div class="kpi"><div class="lab">If all open win</div><div class="val up">$164.71</div>
+      <div class="note">on $74.65 staked &middot; +$90.07</div></div>
+    <div class="kpi"><div class="lab">Model spend</div><div class="val">$22.47</div>
+      <div class="note">52 forecasts &middot; real dollars</div></div>
+  </div>
+
+  <h2>Open positions</h2>
+  <div class="scroll"><table>
+    <tr><th>Market</th><th>Side</th><th class="n">Entry</th><th class="n">Now</th><th class="n">Contracts</th><th class="n">Stake</th><th class="n">Unrealized</th><th class="n">If it wins</th><th class="n">Odds now</th><th class="n">Closes</th></tr>
+    <tr data-mkt="2431413">
+      <td class="q">Will Anthropic have the best AI model at the end of December 2026?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.472</td>
+      <td class="n now">0.385</td>
+      <td class="n">12.3</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal down">-$1.08</td>
+      <td class="n"><strong>$12.34</strong> <span class="muted">(+$6.51)</span></td>
+      <td class="n muted odds">38.5%</td>
+      <td class="n">2027-01-01<br><span class="muted">118d left</span></td></tr><tr data-mkt="3865960">
+      <td class="q">Will Bitcoin dip to $70,000 by December 31, 2026?</td>
+      <td><span class="side yes">YES</span></td>
+      <td class="n">0.492</td>
+      <td class="n now">0.550</td>
+      <td class="n">11.8</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal up">$0.68</td>
+      <td class="n"><strong>$11.84</strong> <span class="muted">(+$6.01)</span></td>
+      <td class="n muted odds">55.0%</td>
+      <td class="n">2027-01-01<br><span class="muted">118d left</span></td></tr><tr data-mkt="3832915">
+      <td class="q">Will FC Barcelona win on 2026-09-06?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.241</td>
+      <td class="n now">0.245</td>
+      <td class="n">17.3</td>
+      <td class="n">$4.18</td>
+      <td class="n unreal up">$0.07</td>
+      <td class="n"><strong>$17.33</strong> <span class="muted">(+$13.15)</span></td>
+      <td class="n muted odds">24.5%</td>
+      <td class="n">2026-09-06<br><span class="muted">1d left</span></td></tr><tr data-mkt="3503314">
+      <td class="q">Will Elif Eralp be the next Governing Mayor of Berlin?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.513</td>
+      <td class="n now">0.555</td>
+      <td class="n">10.5</td>
+      <td class="n">$5.38</td>
+      <td class="n unreal up">$0.45</td>
+      <td class="n"><strong>$10.50</strong> <span class="muted">(+$5.12)</span></td>
+      <td class="n muted odds">55.5%</td>
+      <td class="n">2026-09-20<br><span class="muted">15d left</span></td></tr><tr data-mkt="3829899">
+      <td class="q">Will Manchester United FC win on 2026-09-06?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.553</td>
+      <td class="n now">0.545</td>
+      <td class="n">10.5</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal down">-$0.08</td>
+      <td class="n"><strong>$10.55</strong> <span class="muted">(+$4.72)</span></td>
+      <td class="n muted odds">54.5%</td>
+      <td class="n">2026-09-06<br><span class="muted">1d left</span></td></tr><tr data-mkt="567688">
+      <td class="q">Netanyahu out by end of 2026?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.523</td>
+      <td class="n now">0.525</td>
+      <td class="n">11.2</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal up">$0.03</td>
+      <td class="n"><strong>$11.16</strong> <span class="muted">(+$5.33)</span></td>
+      <td class="n muted odds">52.5%</td>
+      <td class="n">2027-01-01<br><span class="muted">118d left</span></td></tr><tr data-mkt="562793">
+      <td class="q">Will the Democratic Party control the Senate after the 2026 Midterm elections?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.492</td>
+      <td class="n now">0.485</td>
+      <td class="n">11.8</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal down">-$0.09</td>
+      <td class="n"><strong>$11.84</strong> <span class="muted">(+$6.01)</span></td>
+      <td class="n muted odds">48.5%</td>
+      <td class="n">2026-11-03<br><span class="muted">59d left</span></td></tr><tr data-mkt="4016628">
+      <td class="q">Will Bitcoin dip to $76,000 August 31-September 6?</td>
+      <td><span class="side yes">YES</span></td>
+      <td class="n">0.362</td>
+      <td class="n now">0.015</td>
+      <td class="n">12.4</td>
+      <td class="n">$4.49</td>
+      <td class="n unreal down">-$4.31</td>
+      <td class="n"><strong>$12.40</strong> <span class="muted">(+$7.91)</span></td>
+      <td class="n muted odds">1.5%</td>
+      <td class="n">2026-09-07<br><span class="muted">2d left</span></td></tr><tr data-mkt="3748548">
+      <td class="q">Will SPD win between 5% and 7% of all valid second votes?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.563</td>
+      <td class="n now">0.665</td>
+      <td class="n">10.4</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal up">$1.06</td>
+      <td class="n"><strong>$10.36</strong> <span class="muted">(+$4.53)</span></td>
+      <td class="n muted odds">66.5%</td>
+      <td class="n">2026-09-06<br><span class="muted">1d left</span></td></tr><tr data-mkt="601826">
+      <td class="q">Will Flávio Bolsonaro win the 2026 Brazilian presidential election?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.606</td>
+      <td class="n now">0.605</td>
+      <td class="n">9.6</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal down">-$0.01</td>
+      <td class="n"><strong>$9.62</strong> <span class="muted">(+$3.79)</span></td>
+      <td class="n muted odds">60.5%</td>
+      <td class="n">2026-10-04<br><span class="muted">29d left</span></td></tr><tr data-mkt="1088472">
+      <td class="q">Will Carlos Alcaraz win the 2026 Men&#39;s US Open?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.643</td>
+      <td class="n now">0.565</td>
+      <td class="n">9.1</td>
+      <td class="n">$5.83</td>
+      <td class="n unreal down">-$0.71</td>
+      <td class="n"><strong>$9.07</strong> <span class="muted">(+$3.23)</span></td>
+      <td class="n muted odds">56.5%</td>
+      <td class="n">2026-09-13<br><span class="muted">8d left</span></td></tr><tr data-mkt="4016630">
+      <td class="q">Will Bitcoin dip to $74,000 August 31-September 6?</td>
+      <td><span class="side yes">YES</span></td>
+      <td class="n">0.301</td>
+      <td class="n now">0.006</td>
+      <td class="n">16.4</td>
+      <td class="n">$4.95</td>
+      <td class="n unreal down">-$4.84</td>
+      <td class="n"><strong>$16.41</strong> <span class="muted">(+$11.46)</span></td>
+      <td class="n muted odds">0.7%</td>
+      <td class="n">2026-09-07<br><span class="muted">2d left</span></td></tr><tr data-mkt="3791921">
+      <td class="q">Will Newcastle United FC win on 2026-09-05?</td>
+      <td><span class="side yes">YES</span></td>
+      <td class="n">0.452</td>
+      <td class="n now">0.455</td>
+      <td class="n">8.9</td>
+      <td class="n">$4.01</td>
+      <td class="n unreal up">$0.02</td>
+      <td class="n"><strong>$8.86</strong> <span class="muted">(+$4.85)</span></td>
+      <td class="n muted odds">45.5%</td>
+      <td class="n">2026-09-05<br><span class="muted">0d left</span></td></tr><tr data-mkt="2491448">
+      <td class="q">Icelandic European Union membership negotiations referendum passes?</td>
+      <td><span class="side yes">YES</span></td>
+      <td class="n">0.402</td>
+      <td class="n now">0.002</td>
+      <td class="n">12.4</td>
+      <td class="n">$5.00</td>
+      <td class="n unreal down">-$4.98</td>
+      <td class="n"><strong>$12.44</strong> <span class="muted">(+$7.44)</span></td>
+      <td class="n muted odds">0.2%</td>
+      <td class="n">2026-08-30<br><span class="muted">closing</span></td></tr></table></div>
+
+  <h2>Settled</h2>
+  <div class="scroll"><table>
+    <tr><th>Market</th><th>Side</th><th class="n">Entry</th><th class="n">Stake</th><th class="n">Resolved</th><th class="n">P&amp;L</th><th class="n">Settled</th></tr>
+    <tr>
+      <td class="q">Will Elon Musk post 220-239 tweets from August 28 to September 4, 2026?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.834</td>
+      <td class="n">$5.83</td>
+      <td class="n">YES</td>
+      <td class="n down"><strong>-$5.83</strong></td>
+      <td class="n muted">2026-09-05</td></tr><tr>
+      <td class="q">Will Elon Musk post 200-219 tweets from August 28 to September 4, 2026?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.714</td>
+      <td class="n">$5.65</td>
+      <td class="n">NO</td>
+      <td class="n up"><strong>$2.27</strong></td>
+      <td class="n muted">2026-09-05</td></tr><tr>
+      <td class="q">Will Real Madrid CF win on 2026-09-04?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.312</td>
+      <td class="n">$3.63</td>
+      <td class="n">NO</td>
+      <td class="n up"><strong>$8.02</strong></td>
+      <td class="n muted">2026-09-05</td></tr><tr>
+      <td class="q">Will Julian Alvarez join Arsenal?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.577</td>
+      <td class="n">$5.00</td>
+      <td class="n">NO</td>
+      <td class="n up"><strong>$3.67</strong></td>
+      <td class="n muted">2026-09-02</td></tr><tr>
+      <td class="q">Will WTI Crude Oil (WTI) hit (HIGH) $85 in August?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.472</td>
+      <td class="n">$5.00</td>
+      <td class="n">YES</td>
+      <td class="n down"><strong>-$5.00</strong></td>
+      <td class="n muted">2026-09-02</td></tr><tr>
+      <td class="q">Will Bitcoin reach $82,000 August 24-30?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.442</td>
+      <td class="n">$5.00</td>
+      <td class="n">NO</td>
+      <td class="n up"><strong>$6.31</strong></td>
+      <td class="n muted">2026-09-02</td></tr><tr>
+      <td class="q">Will Ethereum dip to $2,400 in August?</td>
+      <td><span class="side yes">YES</span></td>
+      <td class="n">0.362</td>
+      <td class="n">$3.94</td>
+      <td class="n">YES</td>
+      <td class="n up"><strong>$6.96</strong></td>
+      <td class="n muted">2026-09-02</td></tr><tr>
+      <td class="q">Will Ethereum reach $2,600 in August?</td>
+      <td><span class="side no">NO</span></td>
+      <td class="n">0.488</td>
+      <td class="n">$4.47</td>
+      <td class="n">NO</td>
+      <td class="n up"><strong>$4.69</strong></td>
+      <td class="n muted">2026-09-02</td></tr></table></div>
+
+  <h2>What it is thinking</h2>
+  <div class="cards"><article class="card">
+      <h3>Will Anthropic have the best AI model at the end of December 2026?</h3>
+      <div class="nums">
+        <span>Claude <strong>6.0%</strong></span>
+        <span class="muted">Market <strong>53.5%</strong></span>
+        <span class="down">Gap <strong>-47.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> On 2026-12-31 12:00 PM ET, the model at Rank 1 of the LMArena text leaderboard (style control OFF) must be an Anthropic model (with tiebreakers by score, then alphabetical).</p>
+      <p><span class="lbl">Base rate</span> Occupancy of LMArena text #1 by lab, 2023–2025: Google and OpenAI hold it the overwhelming majority of days; xAI briefly; Anthropic essentially never on the default style-control-off view. Snapshot base rate for Anthropic ≈ 2-5%.</p>
+      <p><span class="lbl">For</span> [&quot;Anthropic&#39;s frontier models (Claude 4.x/Opus line) have been highly competitive on general capability by 2025-2026&quot;,&quot;Top slot rotates frequently; any lab shipping a strong late-Q4 model has a shot&quot;,&quot;Arena has occasionally seen Claude models place near the top; Claude 3 Opus briefly contested #1 in March 2024&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Anthropic has (to my knowledge) never held outright #1 on the style-control-off text board&quot;,&quot;Anthropic often delays or skips arena submissions&quot;,&quot;Google and OpenAI dominate this specific metric and ship aggressively in December&quot;,&quot;Claude&#39;s output style is systematically penalized without style control&quot;]</p>
+      <div class="foot muted">resolves 2027-01-01 &middot; forecast 2026-09-04 &middot; cost $0.24</div>
+    </article><article class="card">
+      <h3>Will Bitcoin dip to $75,000 in September?</h3>
+      <div class="nums">
+        <span>Claude <strong>47.0%</strong></span>
+        <span class="muted">Market <strong>43.5%</strong></span>
+        <span class="up">Gap <strong>+3.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if a Binance BTC/USDT 1-minute candle prints a Low ≤ $75,000 at some point between Sep 1 00:00 ET and Sep 30 23:59 ET 2026. Any single wick suffices; it may already have happened earlier in September.</p>
+      <p><span class="lbl">Base rate</span> Barrier-touch for BTC: needing a ~7.4% downside touch from ~$81k over ~27 remaining days, at 2026&#39;s elevated realized vol (~45-60% annualized, sigma over the window ~12-16%), reflection-principle estimate gives roughly 50-60% touch probability. Historically BTC monthly high-low ranges exceed 10% in a large majority of months.</p>
+      <p><span class="lbl">For</span> [&quot;Month-to-date low already in the mid-$76,000s — within ~2% of the trigger&quot;,&quot;2026 has seen repeated sharp drawdowns (126k→57.8k), average monthly ranges far above 7%&quot;,&quot;Miner production cost ~$78k implies structural selling below that level&quot;,&quot;Mt. Gox October deadline positioning and Middle East/oil shock risk within the window&quot;,&quot;Hawkish Fed with rate-hike risk; ETF outflows earlier in 2026&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Price rallied to ~$81k on Sep 3 on ETF flows/Saylor buying, putting a ~7.4% cushion above the barrier&quot;,&quot;Technical posture described as bullish: price above EMA20 (~74,964), EMA50, EMA200&quot;,&quot;Barrier sits essentially at the EMA20, a plausible defended support&quot;,&quot;If the rally extends, only ~26 days remain and the required move grows&quot;]</p>
+      <div class="foot muted">resolves 2026-10-01 &middot; forecast 2026-09-04 &middot; cost $0.44</div>
+    </article><article class="card">
+      <h3>Will Bitcoin dip to $70,000 by December 31, 2026?</h3>
+      <div class="nums">
+        <span>Claude <strong>79.0%</strong></span>
+        <span class="muted">Market <strong>48.5%</strong></span>
+        <span class="up">Gap <strong>+30.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">medium confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES if a Binance BTC/USDT 1-minute candle low prints at or below $70,000 at any point from market creation through Dec 31, 2026 (11:59 PM ET).</p>
+      <p><span class="lbl">Base rate</span> Barrier-touch model for a driftless GBM with BTC realized vol ~55-65% annualized over a ~4-month horizon: probability of touching a level 10% below spot ≈ 70-75%. Consistent with BTC&#39;s own 2026 record of four+ episodes of &gt;10% drawdowns in eight months.</p>
+      <p><span class="lbl">For</span> [&quot;BTC traded ~$64,350 on Aug 7, 2026 — under $70K less than a month before the question date&quot;,&quot;Structural trend described as still bearish; $70K is the second support band down&quot;,&quot;Four+ &gt;10% drawdown episodes already in 2026&quot;,&quot;Leverage-driven cascades make 10% traverses possible in one session&quot;,&quot;Cycle analyses point to a possible Oct-Dec 2026 bottom near $50-55K&quot;,&quot;Hawkish Fed repricing weighing on crypto&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Recent momentum is upward (~$64K to ~$78K in four weeks), driven by real ETF inflows and corporate buying&quot;,&quot;Galaxy&#39;s 50-week MA break signal historically marked bear-market bottoms&quot;,&quot;If a durable bottom formed in the June-August $60-64K range, price may not revisit $70K&quot;,&quot;118 days is a limited window and a sustained recovery could keep price well above the barrier&quot;]</p>
+      <div class="foot muted">resolves 2027-01-01 &middot; forecast 2026-09-04 &middot; cost $0.42</div>
+    </article><article class="card">
+      <h3>Will Bitcoin reach $87,500 in September?</h3>
+      <div class="nums">
+        <span>Claude <strong>42.0%</strong></span>
+        <span class="muted">Market <strong>44.5%</strong></span>
+        <span class="down">Gap <strong>-2.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if Binance BTC/USDT prints any 1-minute candle High ≥ $87,500 between Sept 1 00:00 ET and Sept 30 23:59 ET 2026. A single wick suffices; no close required. Since MTD high appears ~$81.4k, the question is whether the remaining ~27 days produce a touch of $87,500.</p>
+      <p><span class="lbl">Base rate</span> Barrier-touch model: BTC needs roughly +8% (from ~$81k) to +12% (from ~$78k) at some point in 27 days. With ~50-65% annualized vol (sigma ~14-17% over the window), reflection-principle touch probability for a +8% barrier is ~55-62%, for +12% ~38-46%. Historically BTC&#39;s monthly high exceeds month-open by ≥10% in roughly 40-50% of months; requirement here starts mid-month, shortening the window.</p>
+      <p><span class="lbl">For</span> [&quot;Sharp countertrend momentum: BTC up from ~$58k (Jul 1) to ~$81k, including +8% overnight moves in August — an 8% move is routine on this tape&quot;,&quot;Touch-only rule; a single intraday spike resolves YES&quot;,&quot;CoinDesk shows $80,974 on Sept 3 vs $77,310 open — momentum accelerating; a technical framing cites $82.2k breakout with $97k upside target&quot;,&quot;Whale accumulation (~39k BTC in a week) and a recent nine-day ETF inflow streak&quot;,&quot;27 days is a long window for a high-vol asset&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Hawkish Fed repricing (66% odds of a 25bp hike in September) is an identified drag on crypto&quot;,&quot;Bear-market regime through 2026 tends to cap rally extensions&quot;,&quot;If actual spot is nearer $78k, the required move is ~12%, materially lowering touch odds&quot;,&quot;Geopolitical/oil shock (Brent &gt;$96) raising inflation expectations, generally risk-negative&quot;,&quot;ETF flows turned to outflows on Aug 28, ending the inflow streak&quot;,&quot;Algorithmic forecast (low quality) puts September max at ~$83.8k&quot;]</p>
+      <div class="foot muted">resolves 2026-10-01 &middot; forecast 2026-09-04 &middot; cost $0.43</div>
+    </article><article class="card">
+      <h3>Will FC Barcelona win on 2026-09-06?</h3>
+      <div class="nums">
+        <span>Claude <strong>65.0%</strong></span>
+        <span class="muted">Market <strong>76.5%</strong></span>
+        <span class="down">Gap <strong>-11.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if FC Barcelona win the La Liga Matchday 4 away fixture at Valencia (Mestalla) on 6 Sep 2026 within regulation time; a draw or loss resolves NO.</p>
+      <p><span class="lbl">Base rate</span> Elite Barcelona sides win roughly 60-70% of away La Liga matches; vs mid-table Valencia away, historical win rate ~65-70%, with ~18-20% draws.</p>
+      <p><span class="lbl">For</span> [&quot;Barcelona have been the dominant Spanish side in recent seasons and are heavy favourites vs Valencia&quot;,&quot;Valencia have been a mid/lower-table club with limited resources&quot;,&quot;Barcelona typically score heavily and win most matches against non-top-four opposition&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Away fixture at Mestalla, a traditionally hostile ground where Barcelona have dropped points&quot;,&quot;Draw probability is a substantial third outcome (~18%)&quot;,&quot;Possible rotation with Champions League opener three days later&quot;,&quot;Post-international-break disruption; unverified injury/form situation&quot;]</p>
+      <div class="foot muted">resolves 2026-09-06 &middot; forecast 2026-09-04 &middot; cost $0.36</div>
+    </article><article class="card">
+      <h3>Will Elif Eralp be the next Governing Mayor of Berlin?</h3>
+      <div class="nums">
+        <span>Claude <strong>30.0%</strong></span>
+        <span class="muted">Market <strong>49.5%</strong></span>
+        <span class="down">Gap <strong>-19.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if Elif Eralp (Die Linke) is officially sworn in as Governing Mayor of Berlin following the 20 Sept 2026 election (interim/caretaker doesn&#39;t count), with an &#39;Other&#39; fallback if nobody is sworn in by 31 May 2027. Despite the listed resolution date of 20 Sept 2026, substantive resolution must await coalition formation and the Abgeordnetenhaus vote (historically Nov–Apr).</p>
+      <p><span class="lbl">Base rate</span> Post-1990 Berlin: the Governing Mayor has always come from the party with the most second votes (SPD 1991–2021, CDU 2023); Die Linke/PDS has never led a Berlin government. Conditional base rate: a party polling roughly tied for first, whose two possible partners are both cool on it, forms a government it leads maybe 40–55% of the time; combined with ~45–50% chance of finishing first plus a small tail for leading from second place.</p>
+      <p><span class="lbl">For</span> [&quot;Eralp is Linke&#39;s undisputed, unanimously nominated lead candidate and explicit mayoral &#39;offer&#39;&quot;,&quot;Multiple polls (Civey 31 Aug, mid-Aug poll at 22%) show Linke first; Linke won Berlin in the Feb 2025 Bundestag election with ~20%&quot;,&quot;Incumbent Wegner withdrew after the January 2026 blackout criticism, weakening CDU&#39;s personal incumbency advantage; CDU runs a low-profile new candidate (Evers)&quot;,&quot;No black-red majority in any published poll, so status-quo continuation is blocked; a left three-way coalition is a live commentated option&quot;,&quot;Berlin has an existing R2G precedent (2016–2023), so SPD/Greens cooperating with Linke is normal there&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;INSA (14 Aug) and Infratest dimap (early Sep) put CDU back in front; final-week movement often favours the mainstream centre-right in Berlin&quot;,&quot;SPD has reacted reservedly to Linke expropriation plans and would be a shrunken junior partner under a Linke mayor — a strong incentive to prefer a CDU-led deal where it is more pivotal&quot;,&quot;Green lead candidate Graf is seen as open to a Green–CDU alignment&quot;,&quot;Historical pattern: Berlin&#39;s mayor has always come from the largest party, and Die Linke has never led a state government in a western/whole-city Land except via first-place breakthroughs&quot;,&quot;Internal Linke friction (Palestine/Neukölln controversy) is a downside risk to its final score&quot;,&quot;Long, multi-veto formation process (member votes, negotiations) offers many failure points for the specific Linke-led outcome&quot;]</p>
+      <div class="foot muted">resolves 2026-09-20 &middot; forecast 2026-09-04 &middot; cost $0.46</div>
+    </article><article class="card">
+      <h3>Sweden Parliamentary Election: Liberals Win Seats?</h3>
+      <div class="nums">
+        <span>Claude <strong>42.0%</strong></span>
+        <span class="muted">Market <strong>46.5%</strong></span>
+        <span class="down">Gap <strong>-4.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if Valmyndigheten&#39;s official 2026 result attributes at least one Riksdag seat to Liberalerna — i.e., L clears the 4% national threshold (or wins ≥12% in a single constituency, effectively impossible), with results known by 31 Dec 2026.</p>
+      <p><span class="lbl">Base rate</span> Parties polling ~2.5–3.3% ten days out in Sweden clearing 4% on election day: historically maybe 25–40%, elevated for L specifically, which has repeatedly outperformed late polls via support votes (2022: from ~2% in spring to 4.6%; 2018, 2014 similar late upside). Incumbent Riksdag parties being ejected is rare (last Ny Demokrati 1994), but L&#39;s polling is unusually weak.</p>
+      <p><span class="lbl">For</span> [&quot;L rose from 1.9% to 3.0–3.3% in two weeks, with within-fieldwork strengthening in both Novus and Verian&quot;,&quot;L has a strong track record of late surges and threshold-clearing (2022: 4.6% after ~2% earlier in year)&quot;,&quot;Bloc gap narrowed to ~2.6 points, increasing incentive for tactical support voting to secure a right-bloc majority&quot;,&quot;Swedish polls have historically underestimated small right-bloc parties in the final stretch&quot;,&quot;Verian/Novus report the support-vote controversy raised L&#39;s salience and drew voters from M, SD and S&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Aggregate still ~2.5%, roughly 1.5 points short with only nine days left&quot;,&quot;Åkesson set a 3.5% bar that was not met and may formally tell voters to abandon L; Kristersson explicitly said no to support votes&quot;,&quot;Novus&#39;s structural analysis found little support-vote potential in 2026 (M needs its own votes; low confidence in new leader Mohamsson)&quot;,&quot;L spent essentially the entire term below 4%, unlike 2022 when it was already at 4.7% by July&quot;,&quot;Early voting since 26 August locks in ballots cast at L&#39;s polling nadir&quot;]</p>
+      <div class="foot muted">resolves 2026-09-13 &middot; forecast 2026-09-04 &middot; cost $0.57</div>
+    </article><article class="card">
+      <h3>Will Manchester United FC win on 2026-09-06?</h3>
+      <div class="nums">
+        <span>Claude <strong>35.0%</strong></span>
+        <span class="muted">Market <strong>45.5%</strong></span>
+        <span class="down">Gap <strong>-10.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">medium confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Manchester United must win at Everton (away, Hill Dickinson) on 6 Sep 2026 in 90 minutes + stoppage time. Draw or loss resolves NO.</p>
+      <p><span class="lbl">Base rate</span> Premier League away teams win ~30% of matches; a slightly-favoured away side against a mid-table home team wins ~33-40%.</p>
+      <p><span class="lbl">For</span> [&quot;United won both 2025-26 meetings, including away&quot;,&quot;Strong attacking output vs Ipswich (xG 4.55), Bruno Fernandes in form&quot;,&quot;United generally have superior squad quality/market expectation&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Everton at home under Moyes are organised and defensively solid&quot;,&quot;United&#39;s away record poor; conceded first in both league games&quot;,&quot;Everton unbeaten so far this season&quot;]</p>
+      <div class="foot muted">resolves 2026-09-06 &middot; forecast 2026-09-04 &middot; cost $0.41</div>
+    </article><article class="card">
+      <h3>Netanyahu out by end of 2026?</h3>
+      <div class="nums">
+        <span>Claude <strong>18.0%</strong></span>
+        <span class="muted">Market <strong>48.5%</strong></span>
+        <span class="down">Gap <strong>-30.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if Netanyahu actually ceases to be PM (a successor sworn in, death/incapacity, or formal resignation/removal announcement) at some point before 2027-01-01 04:59Z. Caretaker continuity after an election does not count; he must actually lose the office or announce resignation/removal.</p>
+      <p><span class="lbl">Base rate</span> Israeli incumbents rarely exit mid-term; Netanyahu has left office only twice in ~30 years, both after full electoral/coalition processes. Gap from election day to a new government being sworn in is historically 8-12 weeks, and 2 of 7 recent elections produced no government at all.</p>
+      <p><span class="lbl">For</span> [&quot;Statutory election falls in late October 2026, the single biggest catalyst, inside the window&quot;,&quot;2025 polling and coalition distress (Haredi draft law, Shas/UTJ withdrawals) suggested Netanyahu&#39;s bloc short of 61&quot;,&quot;Market resolves on mere announcement of resignation/removal, a lower bar than actual exit; pardon-for-retirement scenario would trigger it&quot;,&quot;If an early election already happened in H1 2026, a successor could plausibly be sworn in within the window&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Incumbent remains caretaker PM with full powers after an election until a successor is sworn in — so an Oct 2026 loss most likely yields a new PM in Jan-Mar 2027, resolving NO&quot;,&quot;Netanyahu has never resigned mid-term, including while under indictment since 2019&quot;,&quot;Even in 2021 (clearest analogue), the alternative coalition took ~11 weeks post-election to be sworn in&quot;,&quot;Tishrei holidays and winter-session scheduling compress the post-election government-formation timetable&quot;,&quot;Coalition formation by a fragmented opposition bloc is historically slow; two recent elections produced deadlock and repeat votes&quot;]</p>
+      <div class="foot muted">resolves 2027-01-01 &middot; forecast 2026-09-03 &middot; cost $0.31</div>
+    </article><article class="card">
+      <h3>Will CDU win the most seats in the 2026 Berlin state elections?</h3>
+      <div class="nums">
+        <span>Claude <strong>40.0%</strong></span>
+        <span class="muted">Market <strong>42.5%</strong></span>
+        <span class="down">Gap <strong>-2.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if the CDU wins the most seats in the Abgeordnetenhaus following the 20 Sept 2026 Berlin election (ties broken alphabetically; &#39;Other&#39; if no vote by 31 Dec 2026).</p>
+      <p><span class="lbl">Base rate</span> Extremely tight multi-party races (leads of 1-3 pts across institutes, larger than typical Berlin polling error of ~1.3-1.5 pp MAD) resolve roughly as coin-flips between the top two, with residual probability for third/fourth placed parties within 3 pts. Prior on the leading party in a 4-way cluster: ~35-45%.</p>
+      <p><span class="lbl">For</span> [&quot;Most recent published poll (2 Sept) has CDU first at 21% vs Linke 19%&quot;,&quot;INSA 14 Aug also had CDU narrowly first (20-19)&quot;,&quot;CDU is incumbent-led governing party with organizational strength and reliable older electorate; Berlin CDU outperformed polls in 2023&quot;,&quot;Lead-candidate switch to Evers produced a measurable bounce&quot;,&quot;Die Linke has never finished first in a Berlin state election&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Infratest dimap fieldwork ending 31 Aug has Linke ahead 20-19; Forsa in August had Linke clearly ahead at 21-22%&quot;,&quot;CDU polling 7-9 pts below its 2023 result; Wegner&#39;s forced withdrawal signals damaged brand after the January blackout&quot;,&quot;Die Linke has strong momentum and has repeatedly outperformed final polls in recent German elections (2025 federal)&quot;,&quot;Berlin&#39;s urban electorate skews strongly left; potential housing/expropriation referendum could lift left turnout&quot;,&quot;AfD (18%) and Greens (16-18%) are close enough to occasionally place first in a fragmented field&quot;]</p>
+      <div class="foot muted">resolves 2026-09-20 &middot; forecast 2026-09-03 &middot; cost $0.61</div>
+    </article><article class="card">
+      <h3>Will the Democratic Party control the Senate after the 2026 Midterm elections?</h3>
+      <div class="nums">
+        <span>Claude <strong>22.0%</strong></span>
+        <span class="muted">Market <strong>51.5%</strong></span>
+        <span class="down">Gap <strong>-29.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if Democrats (including independents caucusing with them) win at least 51 attributed Senate seats after the Nov 3, 2026 elections; a 50-50 split resolves NO because the VP is Republican. Democrats need a net gain of four seats from the current 53-47 Republican majority.</p>
+      <p><span class="lbl">Base rate</span> Out-party net gains of +4 or more Senate seats in a midterm: roughly 4 of the last ~12 cycles, and typically only with a favorable class map. Senate control flips in roughly 25-30% of cycles. Conditional on a needed +4 with Democrats defending GA/MI/NH/MN, base rate is lower, ~15-20%.</p>
+      <p><span class="lbl">For</span> [&quot;Cook moved Iowa and Texas from Lean R to Toss-up in late Aug 2026 — evidence of a genuinely favorable environment&quot;,&quot;Six Republican retirements vs four Democratic; open seats flip more often&quot;,&quot;Historic midterm penalty against the president&#39;s party&quot;,&quot;Democrats expanding the map into Kansas and Mississippi suggests confidence backed by internal data&quot;,&quot;Close Senate races tend to break uniformly with the environment — a wave could deliver several at once&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Net +4 requirement with an unfavorable arithmetic starting point (53-47) and no tiebreak help&quot;,&quot;Even optimistic paths require winning at least two of Texas/Iowa/Ohio/Alaska/Kansas, all states Republicans have carried decisively in recent presidential years&quot;,&quot;Democrats must also defend Georgia and Michigan, both perennial toss-ups&quot;,&quot;Susan Collins has repeatedly outperformed polls in Maine&quot;,&quot;Independent candidates in NE/MT/ID/SD may win without counting for Democrats under this market&#39;s caucus rule&quot;,&quot;Recent Senate cycles (2022, 2024) showed Republican strength in red-state Senate races even amid split-ticket dynamics&quot;]</p>
+      <div class="foot muted">resolves 2026-11-03 &middot; forecast 2026-09-03 &middot; cost $0.40</div>
+    </article><article class="card">
+      <h3>Will Bitcoin reach $80,000 August 31-September 6?</h3>
+      <div class="nums">
+        <span>Claude <strong>30.0%</strong></span>
+        <span class="muted">Market <strong>35.5%</strong></span>
+        <span class="down">Gap <strong>-5.5pp</strong></span>
+      </div>
+      <div class="tags"><span class="tag">stale knowledge</span><span class="tag">low confidence</span></div>
+      <p><span class="lbl">Reads the criteria as</span> Resolves YES only if a Binance BTC/USDT 1-minute candle high reaches $80,000 or more at some point from Aug 31 00:00 ET through Sep 6 23:59 ET. Roughly half the window has already passed with no reported print at/above $80K, so effectively it needs a ~+2.7% rally from ~$77.9K in the remaining ~3.7 days.</p>
+      <p><span class="lbl">Base rate</span> Barrier-touch estimate: with BTC daily sigma ~2.0–2.5% in current consolidation, 3.7-day sigma ≈ 3.9–4.8%; reflection-principle touch probability for a 2.7% OTM barrier is ~45–57%. Discounted for the observed negative short-term drift/failed prior attempts.</p>
+      <p><span class="lbl">For</span> [&quot;$80K–$81.2K was traded as recently as Aug 25–27, so the level is reachable under current liquidity&quot;,&quot;Daily ATR ~$2,666 (~3.4%) exceeds the required move; a single strong day could do it&quot;,&quot;Record August ETF inflows (~$3B+), Saylor resumed buying, Fear &amp; Greed at 65 (Greed)&quot;,&quot;Price still above EMA20/50/200 — structure intact&quot;]</p>
+      <p><span class="lbl">Against</span> [&quot;Every observation Aug 31–Sep 3 sits in $77.1K–$78.6K; steady daily drift lower all window&quot;,&quot;Daily MACD histogram turned negative; momentum cooling&quot;,&quot;Hawkish Fed repricing (rate hike expectations) weighing on crypto and metals&quot;,&quot;$80K has repeatedly failed as resistance; late-Aug spike immediately erased&quot;,&quot;Only ~3.7 days left, two of which are low-liquidity weekend days with no ETF flow prints&quot;]</p>
+      <div class="foot muted">resolves 2026-09-07 &middot; forecast 2026-09-03 &middot; cost $0.40</div>
+    </article></div>
+</div>
+<script>
+(function(){
+  var POS = [{"id":"2431413","side":"NO","contracts":12.344636956997824,"stake":5.830989266637921},{"id":"3865960","side":"YES","contracts":11.840774224059135,"stake":5.830989266637921},{"id":"3832915","side":"NO","contracts":17.331514546900824,"stake":4.180361308712478},{"id":"3503314","side":"NO","contracts":10.496562630104222,"stake":5.380013176059919},{"id":"3829899","side":"NO","contracts":10.549053399616321,"stake":5.830989266637921},{"id":"567688","side":"NO","contracts":11.15765263420957,"stake":5.830989266637921},{"id":"562793","side":"NO","contracts":11.840774224059135,"stake":5.830989266637921},{"id":"4016628","side":"YES","contracts":12.399334371698131,"stake":4.486079175680383},{"id":"3748548","side":"NO","contracts":10.360677446051744,"stake":5.830989266637921},{"id":"601826","side":"NO","contracts":9.621856334641752,"stake":5.830989266637921},{"id":"1088472","side":"NO","contracts":9.065592765295277,"stake":5.830989266637921},{"id":"4016630","side":"YES","contracts":16.405023987592315,"stake":4.946114732259082},{"id":"3791921","side":"YES","contracts":8.862874610080711,"stake":4.008235042409002},{"id":"2491448","side":"YES","contracts":12.437810945273633,"stake":5}];
+  var el = function(s,r){return (r||document).querySelector(s)};
+  var money = function(n){return (n<0?"-":"")+"$"+Math.abs(n).toFixed(2)};
+  var status = el("#status");
+  if(!POS.length){ if(status) status.textContent="no open positions"; return; }
+
+  function yesPrice(m){
+    try{
+      var p = typeof m.outcomePrices==="string" ? JSON.parse(m.outcomePrices) : m.outcomePrices;
+      var v = parseFloat(p[0]);
+      return isFinite(v) ? v : null;
+    }catch(e){ return null; }
+  }
+
+  function paint(prices){
+    var cost=0, value=0, live=0;
+    POS.forEach(function(p){
+      var yes = prices[p.id];
+      var now = yes===null||yes===undefined ? null : (p.side==="YES" ? yes : 1-yes);
+      var val = now===null ? p.stake : p.contracts*now;
+      cost += p.stake; value += val;
+      if(now!==null) live++;
+      var row = el('tr[data-mkt="'+p.id+'"]');
+      if(!row || now===null) return;
+      var d = val - p.stake;
+      var c;
+      if((c=el(".now",row)))    c.textContent = now.toFixed(3);
+      if((c=el(".odds",row)))   c.textContent = (now*100).toFixed(1)+"%";
+      if((c=el(".unreal",row))){ c.textContent = money(d);
+        c.className = "n unreal " + (d>=0?"up":"down"); }
+    });
+    var unreal = value - cost;
+    var w = el(".wrap"); var base = parseFloat((w && w.dataset.cash) || "0");
+    var k;
+    if((k=el("#kpi-unreal"))){ k.textContent = money(unreal);
+      k.className = "val " + (unreal>=0?"up":"down"); }
+    if((k=el("#kpi-equity"))) k.textContent = money(base + value);
+    if(status){
+      status.textContent = "live · " + live + "/" + POS.length + " priced · " +
+        new Date().toLocaleTimeString();
+      status.className = "pill live";
+    }
+  }
+
+  function tick(){
+    Promise.all(POS.map(function(p){
+      return fetch("https://gamma-api.polymarket.com/markets?id="+encodeURIComponent(p.id))
+        .then(function(r){ return r.ok ? r.json() : null; })
+        .then(function(j){
+          var m = Array.isArray(j) ? j[0] : j;
+          return [p.id, m ? yesPrice(m) : null];
+        })
+        .catch(function(){ return [p.id, null]; });
+    })).then(function(pairs){
+      var prices={}, any=false;
+      pairs.forEach(function(kv){ prices[kv[0]]=kv[1]; if(kv[1]!==null) any=true; });
+      if(any) paint(prices);
+      else if(status) status.textContent = "snapshot · live prices unavailable here";
+    }).catch(function(){
+      if(status) status.textContent = "snapshot · live prices unavailable here";
+    });
+  }
+
+  tick();
+  setInterval(tick, 20000);
+  document.addEventListener("visibilitychange", function(){ if(!document.hidden) tick(); });
+})();
+</script>

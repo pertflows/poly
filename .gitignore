@@ -1,10 +1,13 @@
 node_modules/
 .env
 .env.local
-*.db
+# The paper-trading ledger is committed on purpose: this runs in ephemeral
+# containers, so the run history has to live in the repo to survive between
+# scans. It holds no secrets - only public market data and simulated positions.
 *.db-journal
 *.db-wal
 *.db-shm
-data/
+!data/poly.db
 dist/
 .DS_Store
+dashboard.html
