@@ -30,15 +30,23 @@ Node >= 22.9 (`--env-file-if-exists`, built-in SQLite). `npm test` and
 - `.env` is gitignored and only exists locally. `.env.example` is committed —
   never put a real key in it.
 
-## Automation
+## STOPPED — nothing runs automatically
 
-`.github/workflows/nightly-scan.yml`, 07:00 UTC daily. Actions, not a Claude
-Routine: a scheduled session can't authenticate the bot's API calls (above),
-and a failed session still records as SUCCEEDED, which hid the failure.
+**The owner shut this project down on 2026-09-09. Do not restart any automation
+without being asked to.** The scheduled workflow has been deleted and the Claude
+Routine removed. Nothing calls the Anthropic API on a schedule any more, and
+running `npm run scan` costs roughly $0.44 per forecast in real money.
 
-**Scheduled workflows only fire from the default branch.** The default branch
-is `claude/polymarket-paper-trading-setup-88a5tx`, not `main`. Vercel's
-production branch is set to the same and serves `web/` as a static site.
+`npm run doctor`, `resolve`, `dashboard` and `report` make no model calls and
+cost nothing. Only `scan` spends.
+
+If it is ever restarted: the schedule used to live in
+`.github/workflows/nightly-scan.yml` at 07:00 UTC, on GitHub Actions rather
+than a Claude Routine — a scheduled session cannot authenticate the bot's API
+calls (see above), and a failed session still records as SUCCEEDED, which hid
+two days of silent failures. Scheduled workflows only fire from the default
+branch, which is `claude/polymarket-paper-trading-setup-88a5tx`, not `main`.
+Vercel's production branch is the same and serves `web/` as a static site.
 
 ## Decisions that look wrong but aren't
 
