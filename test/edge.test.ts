@@ -12,8 +12,23 @@ import {
 import { quoteFromBook, walkBook } from "../src/polymarket/clob.ts";
 import type { BinaryMarket, Forecast, OrderBook } from "../src/types.ts";
 
+/**
+ * Shrinkage and edge thresholds are tunables, so a test that reads whatever
+ * the defaults happen to be is really asserting on configuration rather than
+ * on behaviour - and breaks the moment the defaults are retuned. These pin the
+ * discriminating values the mechanism is supposed to honour: distinct factors
+ * per confidence level, and stale knowledge shrinking harder than plain.
+ */
 function cfg() {
-  return loadConfig();
+  const base = loadConfig();
+  return {
+    ...base,
+    trade: {
+      ...base.trade,
+      shrink: { low: 0.2, medium: 0.35, high: 0.5 },
+      staleKnowledgeShrink: 0.3,
+    },
+  };
 }
 
 /** Probabilities are floats; compare with tolerance rather than bit-equality. */

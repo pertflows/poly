@@ -1,0 +1,7 @@
+{
+  "capturedAt": "2026-08-28T01:04:09.413Z",
+  "marketUrl": "https://gamma-api.polymarket.com/markets?closed=false&active=true&limit=100&order=volume24hr&ascending=false",
+  "bookUrl": "https://clob.polymarket.com/book?token_id=55115078421062885512539156303747803058407616201213034911037320915726138659123",
+  "marketId": "665374",
+  "note": "Captured verbatim by `npm run capture`. Do not hand-edit - recapture instead."
+}

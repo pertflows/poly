@@ -74,8 +74,9 @@ exactly the bias that makes a bad strategy look good.
 
 ```bash
 npm install
-cp .env.example .env      # add your ANTHROPIC_API_KEY
+cp .env.example .env      # put your ANTHROPIC_API_KEY in .env, never in .env.example
 npm run doctor            # verify config, credentials, Gamma, and the CLOB
+npm run capture           # pin the live API shapes into test/fixtures/
 npm run scan -- --dry-run # see what would be forecast, spend nothing
 npm run scan              # forecast and open paper positions
 npm run resolve           # settle positions as markets resolve
@@ -155,27 +156,128 @@ src/
   engine/edge.ts       shrinkage, Kelly sizing, depth-aware entry pricing
   engine/calibration.ts Brier scores, calibration bins, the edge test
   store/               SQLite schema and queries (Node's built-in sqlite)
-  cli/                 doctor, scan, resolve, report
-test/                  38 tests, concentrated on the money math and parsing
+  cli/                 doctor, capture, scan, resolve, report
+test/                  45 tests, concentrated on the money math and parsing
+  fixtures/            live Gamma/CLOB payloads, written by `npm run capture`
 ```
 
 `npm test` runs the suite; `npm run typecheck` runs `tsc --noEmit`.
 
+Requires Node 22.9 or newer: the CLI loads `.env` via `--env-file-if-exists`,
+and the store uses Node's built-in SQLite.
+
 ## Status
 
-The forecasting logic, screening, sizing, scoring, and persistence are
-implemented and unit-tested offline. Two surfaces have not yet been exercised
-against the real thing, because the environment this was built in had no network
-access to Polymarket and no Anthropic credentials:
+Everything except the cost measurement has now been exercised against the live
+APIs. Both surfaces that were previously unverified are verified.
 
-- **Gamma and CLOB response shapes.** The clients are written to accept both the
-  JSON-string and native-array encodings Gamma has used for `outcomes`,
-  `outcomePrices`, and `clobTokenIds`, and both string and numeric forms of the
-  numeric fields. `npm run doctor` fetches a live market, reports exactly which
-  fields it found, and dumps the raw payload shape if normalization fails.
-- **The Claude request shape.** Specifically the `web_search_20260209` tool, and
-  `output_config` carrying both `effort` and a structured-output `format`
-  alongside adaptive thinking. `npm run doctor` confirms credentials and model
-  availability; the first `npm run scan` exercises the rest.
+**Gamma and CLOB response shapes: verified.** `npm run doctor` passes against
+live endpoints, and `test/fixtures/` holds a real market and a real order book
+captured verbatim by `npm run capture`. The client's assumptions all held:
 
-Run `npm run doctor` first. It is built to tell you precisely what to fix.
+- `outcomes`, `outcomePrices`, and `clobTokenIds` arrive as JSON-encoded
+  strings (`"[\"Yes\", \"No\"]"`), which `parseListField` decodes.
+- `liquidity` and `volume` are strings; `liquidityNum` and `volumeNum` are
+  floats. The client prefers the `*Num` variants, so it gets numbers.
+- `umaResolutionStatus` is absent from the markets list payload. Harmless —
+  resolution settles on `closed` plus cleared `outcomePrices`, not on it.
+
+`test/fixtures.test.ts` pins all of this against the captured payloads. Fixtures
+go stale; when Gamma changes shape, re-run `npm run capture` and the diff shows
+exactly what moved.
+
+**The Claude request shape: verified** against the installed SDK's parameter
+types (`@anthropic-ai/sdk` 0.122.0) and the current API reference. Correct as
+written — `web_search_20260209`, `output_config` carrying `effort` and a
+structured-output `format` together alongside `thinking: {type: "adaptive"}`,
+`messages.parse()` / `parsed_output`, no `budget_tokens` (a 400 on Opus 5), and
+pricing that matches published rates. `test/request-shape.test.ts` pins it in
+type annotations, so `npm run typecheck` fails on drift without spending a
+token.
+
+**Not yet measured: what a forecast actually costs.** That needs a funded
+`ANTHROPIC_API_KEY`. Run `npm run scan -- --limit 1` and read the cost off
+`npm run report` before running a full scan.
+
+## What the screen actually does
+
+On a live run of 500 markets, 73 passed:
+
+```
+    113  not a binary Yes/No market
+    113  resolves beyond 120d
+     97  priced at the extremes
+     90  resolves in under 2d
+      6  below liquidity floor
+      5  no usable resolution date
+      3  spread too wide
+```
+
+Two things this exposes, both worth fixing before spending real money on
+forecasts:
+
+**The scan fetches the wrong end of the market.** `fetchOpenMarkets` pages
+Gamma with `order=volume24hr&ascending=false` — the most heavily traded markets
+first. Those are precisely the ones this project argues are the worst place to
+look, and the liquidity ceiling never fires as a result: nothing in the top 500
+by volume was rejected for being too liquid. Reaching the long tail means
+sorting differently or paging much deeper.
+
+**The ranker steers spend toward markets with no plausible edge.** `rankForScan`
+prefers soon-resolving, mid-priced markets, and on a live run that selected nine
+short-dated crypto touch markets out of fifteen — "Will Bitcoin reach $82,500 in
+August", four days out. A four-day price-touch question is close to a random
+walk; careful reading of resolution criteria buys nothing there. The
+soon-resolving preference is defensible while you want fast feedback, but it
+needs a counterweight, or most of the budget goes to questions where the market
+is right by construction.
+
+## What a scan costs
+
+Measured against the live API on one real market (an Icelandic EU referendum
+question, two days to resolution):
+
+| Configuration | Cost per forecast | Wall clock |
+|---|---|---|
+| Defaults: research on, `effort=high` | **$0.65** | 2m52s |
+| research on, `effort=high`, searches capped at 3 | $0.65 | 4m17s |
+| research on, `effort=medium` | $0.38 | 1m41s |
+| research off, `effort=high` | $0.05 | 27s |
+
+**The research stage is 92% of the cost** - $0.60 of the $0.65. Search results
+land in the context window and are billed as input tokens on every continuation
+of the server-side tool loop, and the thinking that accompanies them is billed
+as output.
+
+Two of these results are worth knowing before you tune anything:
+
+**`POLY_RESEARCH_MAX_SEARCHES` does nothing useful.** Halving it from 6 to 3
+cost exactly the same and took ninety seconds *longer*. It is a ceiling the
+model was not reaching; the spend is driven by how much it reads and thinks,
+not by a search count. Lowering it buys nothing.
+
+**`POLY_EFFORT` is the lever that works.** `medium` costs 42% less than `high`
+and finishes in half the time. Whether it forecasts as well is unmeasured -
+that is what the calibration report is for, and it is worth running both for a
+while before settling.
+
+### Hitting a monthly budget
+
+$100/month is $3.33/day. Divide by the measured cost:
+
+| Configuration | Forecasts/day | Monthly |
+|---|---|---|
+| Defaults ($0.65) | 5 | $97 |
+| `POLY_EFFORT=medium` ($0.38) | 8 | $91 |
+| `POLY_RESEARCH=false` ($0.05) | 66 | $99 |
+
+The default `POLY_MAX_FORECASTS=15` run daily is **$292/month**, roughly triple
+that budget. Set it deliberately.
+
+The last row is a trap worth naming: 66 forecasts a day reaches statistical
+significance fastest and is the cheapest per forecast, but it forecasts from
+training data alone on questions that turn on this week's news. Cheap forecasts
+you cannot trust are not a bargain.
+
+A spend limit set in the Claude Console is a better guardrail than any of this,
+because it holds when a scheduled run misbehaves.

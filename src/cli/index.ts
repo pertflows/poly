@@ -1,3 +1,5 @@
+import { capture } from "./capture.ts";
+import { dashboard } from "./dashboard.ts";
 import { doctor } from "./doctor.ts";
 import { scan } from "./scan.ts";
 import { resolve } from "./resolve.ts";
@@ -7,6 +9,8 @@ const USAGE = `
 poly - measure whether Claude has forecasting edge over Polymarket
 
   npm run doctor              check config, credentials, and both APIs
+  npm run capture             save live Gamma/CLOB payloads to test/fixtures/
+  npm run dashboard           render the paper ledger as an HTML page
   npm run scan                screen markets, forecast, open paper positions
   npm run scan -- --dry-run   show what would be forecast, spend nothing
   npm run scan -- --limit 5   cap this run at 5 forecasts
@@ -22,6 +26,10 @@ async function main(): Promise<number> {
   switch (command) {
     case "doctor":
       return doctor();
+    case "capture":
+      return capture(rest);
+    case "dashboard":
+      return dashboard(rest);
     case "scan":
       return scan(rest);
     case "resolve":

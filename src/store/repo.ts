@@ -65,8 +65,9 @@ export function insertForecast(
          probability, shrunk_probability, market_probability, confidence,
          abstain, abstain_reason, stale_knowledge, ambiguous,
          resolution_reading, base_rate, key_drivers, evidence_for, evidence_against,
-         research, cost_usd
-       ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+         research, cost_usd,
+         input_tokens, output_tokens, cache_read_tokens, cache_write_tokens
+       ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     )
     .run(
       runId,
@@ -92,6 +93,10 @@ export function insertForecast(
       JSON.stringify(forecast.evidenceAgainst),
       run.research,
       run.cost.usd,
+      run.cost.inputTokens,
+      run.cost.outputTokens,
+      run.cost.cacheReadTokens,
+      run.cost.cacheWriteTokens,
     );
   return Number(result.lastInsertRowid);
 }

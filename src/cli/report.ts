@@ -68,6 +68,41 @@ export async function report(): Promise<number> {
 
     const net = summary.realizedPnl - summary.totalCostUsd;
     console.log(`  Net of model cost    ${net >= 0 ? "+" : ""}$${net.toFixed(2)}`);
+
+    // Where the money actually goes. Research is the expensive stage and its
+    // cost is dominated by search results re-billed as input on every
+    // continuation of the tool loop - so input vs output vs cache is the
+    // breakdown that tells you which lever is worth pulling.
+    const t = db
+      .prepare(
+        `SELECT COALESCE(SUM(input_tokens),0)       AS input,
+                COALESCE(SUM(output_tokens),0)      AS output,
+                COALESCE(SUM(cache_read_tokens),0)  AS cacheRead,
+                COALESCE(SUM(cache_write_tokens),0) AS cacheWrite,
+                COUNT(*)                            AS n
+           FROM forecasts`,
+      )
+      .get() as Record<string, number | undefined>;
+
+    const num = (key: string): number => t[key] ?? 0;
+
+    if (num("n") > 0 && num("input") + num("output") > 0) {
+      const k = (v: number): string => `${(v / 1000).toFixed(1)}k`;
+      const per = (v: number): string => (v / num("n")).toFixed(0);
+      console.log("");
+      console.log("  Tokens               total      per forecast");
+      console.log(`    input              ${k(num("input")).padEnd(10)} ${per(num("input"))}`);
+      console.log(`    output             ${k(num("output")).padEnd(10)} ${per(num("output"))}`);
+      console.log(`    cache read         ${k(num("cacheRead")).padEnd(10)} ${per(num("cacheRead"))}`);
+      console.log(`    cache write        ${k(num("cacheWrite")).padEnd(10)} ${per(num("cacheWrite"))}`);
+      const cacheable = num("cacheRead") + num("cacheWrite");
+      if (cacheable > 0) {
+        const hit = (num("cacheRead") / cacheable) * 100;
+        console.log(`    cache hit rate     ${hit.toFixed(0)}%`);
+      } else {
+        console.log(`    cache hit rate     0%  (nothing cached - check cache_control placement)`);
+      }
+    }
     console.log("");
     console.log("    Win rate and P&L are the noisy numbers - a losing strategy shows");
     console.log("    profit over short runs routinely. The Brier comparison above is");

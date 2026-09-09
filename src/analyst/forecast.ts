@@ -97,12 +97,16 @@ export async function researchMarket(
   ];
 
   let cost = ZERO_COST;
-  let brief = "";
+  // Accumulated across continuations: a paused turn can emit part of the brief
+  // before it pauses, and that text is only in that response's content. Keeping
+  // just the last response silently truncates every brief that took more than
+  // one turn - the long-running research, which is the research worth having.
+  const parts: string[] = [];
 
   // Server-side tool loops pause at 10 iterations; resume by re-sending.
   for (let continuation = 0; continuation < 4; continuation++) {
     const response = await client.messages.create({
-      model: cfg.model,
+      model: cfg.researchModel,
       max_tokens: 8_000,
       system: [
         { type: "text", text: RESEARCH_SYSTEM, cache_control: { type: "ephemeral" } },
@@ -119,13 +123,14 @@ export async function researchMarket(
       messages,
     });
 
-    cost = addCost(cost, priceUsage(cfg.model, response.usage, countSearches(response.content)));
+    cost = addCost(cost, priceUsage(cfg.researchModel, response.usage, countSearches(response.content)));
 
     if (response.stop_reason === "refusal") {
       throw new RefusalError(response.stop_details?.category ?? null);
     }
 
-    brief = textOf(response.content);
+    const text = textOf(response.content);
+    if (text) parts.push(text);
 
     if (response.stop_reason !== "pause_turn") break;
 
@@ -134,7 +139,7 @@ export async function researchMarket(
     messages.push({ role: "assistant", content: response.content });
   }
 
-  return { brief, cost };
+  return { brief: parts.join("\n\n"), cost };
 }
 
 /** Stage 2: the blind, structured forecast. */

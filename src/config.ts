@@ -76,6 +76,13 @@ export interface TradeConfig {
 export interface Config {
   dbPath: string;
   model: string;
+  /**
+   * Model for the research stage. Gathering and summarizing evidence is not
+   * the judgement call - that is stage two's job, on `model`. Research is 92%
+   * of a forecast's cost, so running it on a cheaper model is where the bill
+   * actually moves.
+   */
+  researchModel: string;
   effort: Effort;
   research: boolean;
   researchMaxSearches: number;
@@ -89,14 +96,15 @@ export function loadConfig(): Config {
   const cfg: Config = {
     dbPath: envStr("POLY_DB", "./data/poly.db"),
     model: envStr("POLY_MODEL", "claude-opus-5"),
-    effort: envStr("POLY_EFFORT", "high") as Effort,
+    researchModel: envStr("POLY_RESEARCH_MODEL", "claude-opus-5"),
+    effort: envStr("POLY_EFFORT", "medium") as Effort,
     research: envBool("POLY_RESEARCH", true),
     researchMaxSearches: envNum("POLY_RESEARCH_MAX_SEARCHES", 6),
     gammaBase: envStr("POLY_GAMMA_BASE", "https://gamma-api.polymarket.com"),
     clobBase: envStr("POLY_CLOB_BASE", "https://clob.polymarket.com"),
     scan: {
       maxMarkets: envNum("POLY_MAX_MARKETS", 500),
-      maxForecasts: envNum("POLY_MAX_FORECASTS", 15),
+      maxForecasts: envNum("POLY_MAX_FORECASTS", 8),
       concurrency: envNum("POLY_CONCURRENCY", 3),
       refreshDays: envNum("POLY_REFRESH_DAYS", 7),
       minLiquidity: envNum("POLY_MIN_LIQUIDITY", 5_000),
@@ -109,7 +117,7 @@ export function loadConfig(): Config {
       maxPrice: envNum("POLY_MAX_PRICE", 0.95),
     },
     trade: {
-      bankroll: envNum("POLY_BANKROLL", 1_000),
+      bankroll: envNum("POLY_BANKROLL", 100),
       minEdge: envNum("POLY_MIN_EDGE", 0.07),
       kellyFraction: envNum("POLY_KELLY_FRACTION", 0.25),
       maxPositionPct: envNum("POLY_MAX_POSITION_PCT", 0.05),
@@ -117,11 +125,11 @@ export function loadConfig(): Config {
       feeBps: envNum("POLY_FEE_BPS", 0),
       slippageBps: envNum("POLY_SLIPPAGE_BPS", 50),
       shrink: {
-        low: envNum("POLY_SHRINK_LOW", 0.2),
-        medium: envNum("POLY_SHRINK_MEDIUM", 0.35),
-        high: envNum("POLY_SHRINK_HIGH", 0.5),
+        low: envNum("POLY_SHRINK_LOW", 1.0),
+        medium: envNum("POLY_SHRINK_MEDIUM", 1.0),
+        high: envNum("POLY_SHRINK_HIGH", 1.0),
       },
-      staleKnowledgeShrink: envNum("POLY_STALE_SHRINK", 0.3),
+      staleKnowledgeShrink: envNum("POLY_STALE_SHRINK", 1.0),
     },
   };
 

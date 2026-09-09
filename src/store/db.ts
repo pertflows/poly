@@ -39,7 +39,11 @@ CREATE TABLE IF NOT EXISTS forecasts (
   evidence_for       TEXT,
   evidence_against   TEXT,
   research           TEXT,
-  cost_usd           REAL    NOT NULL DEFAULT 0
+  cost_usd           REAL    NOT NULL DEFAULT 0,
+  input_tokens       INTEGER NOT NULL DEFAULT 0,
+  output_tokens      INTEGER NOT NULL DEFAULT 0,
+  cache_read_tokens  INTEGER NOT NULL DEFAULT 0,
+  cache_write_tokens INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE INDEX IF NOT EXISTS idx_forecasts_market  ON forecasts(market_id);
@@ -73,6 +77,28 @@ CREATE TABLE IF NOT EXISTS resolutions (
 );
 `;
 
+/**
+ * Columns added after the first ledgers were written. The paper ledger is
+ * committed and long-lived, so the schema has to move forward without
+ * discarding it - `CREATE TABLE IF NOT EXISTS` alone will not add a column to
+ * a table that already exists.
+ */
+const ADDED_COLUMNS: ReadonlyArray<[table: string, column: string, decl: string]> = [
+  ["forecasts", "input_tokens", "INTEGER NOT NULL DEFAULT 0"],
+  ["forecasts", "output_tokens", "INTEGER NOT NULL DEFAULT 0"],
+  ["forecasts", "cache_read_tokens", "INTEGER NOT NULL DEFAULT 0"],
+  ["forecasts", "cache_write_tokens", "INTEGER NOT NULL DEFAULT 0"],
+];
+
+function migrate(db: DatabaseSync): void {
+  for (const [table, column, decl] of ADDED_COLUMNS) {
+    const cols = db.prepare(`PRAGMA table_info(${table})`).all() as Array<{ name: string }>;
+    if (!cols.some((c) => c.name === column)) {
+      db.exec(`ALTER TABLE ${table} ADD COLUMN ${column} ${decl}`);
+    }
+  }
+}
+
 export function openDb(path: string): DatabaseSync {
   if (path !== ":memory:") {
     mkdirSync(dirname(path), { recursive: true });
@@ -81,6 +107,7 @@ export function openDb(path: string): DatabaseSync {
   db.exec("PRAGMA journal_mode = WAL");
   db.exec("PRAGMA foreign_keys = ON");
   db.exec(SCHEMA);
+  migrate(db);
   return db;
 }
 
